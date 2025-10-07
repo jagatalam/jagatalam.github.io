@@ -14,32 +14,30 @@ th, td { border:1px solid #ccc; padding:8px; text-align:center; }
 th { background:#0078D7; color:white; }
 td.score { font-weight:bold; color:#005BBB; }
 
-/* Options modern */
-.options { display:flex; justify-content:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+/* Tombol opsi modern */
+.options { display:flex; justify-content:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
 
-.options select {
-  appearance: none; -webkit-appearance: none; -moz-appearance: none;
-  padding: 8px 16px;
-  border-radius: 25px;
-  border: 2px solid #0078D7;
-  background: linear-gradient(145deg, #e6f0ff, #ffffff);
-  color: #0078D7;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  outline: none;
+.options button {
+  padding:8px 16px;
+  border-radius:25px;
+  border:none;
+  background:linear-gradient(145deg, #0078D7, #0094FF);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.options select:hover {
-  background: linear-gradient(145deg, #ffffff, #e6f0ff);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transform: translateY(-2px);
+.options button:hover {
+  background:linear-gradient(145deg, #005BBB, #0078D7);
+  transform: translateY(-2px) scale(1.05);
 }
 
-.options select:focus {
-  border-color: #005BBB;
-  box-shadow: 0 0 10px rgba(0,91,187,0.4);
+.options button.active {
+  background:#005BBB;
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 /* Responsive */
@@ -58,18 +56,13 @@ td.score { font-weight:bold; color:#005BBB; }
   <!-- Skor Pertandingan -->
   <div class="panel">
     <h3>Skor Pertandingan</h3>
-    <div class="options">
-      <div>
-        <label>Match: </label>
-        <select id="matchSelect" onchange="updateMatchTable()">
-          <option value="1">Match 1</option>
-          <option value="2">Match 2</option>
-          <option value="3">Match 3</option>
-          <option value="4">Match 4</option>
-          <option value="5">Match 5</option>
-          <option value="6">Match 6</option>
-        </select>
-      </div>
+    <div class="options" id="matchOptions">
+      <button class="active" onclick="setMatch(1)">Match 1</button>
+      <button onclick="setMatch(2)">Match 2</button>
+      <button onclick="setMatch(3)">Match 3</button>
+      <button onclick="setMatch(4)">Match 4</button>
+      <button onclick="setMatch(5)">Match 5</button>
+      <button onclick="setMatch(6)">Match 6</button>
     </div>
     <table id="matchTable">
       <thead>
@@ -82,14 +75,11 @@ td.score { font-weight:bold; color:#005BBB; }
   <!-- Tabel Grup -->
   <div class="panel">
     <h3>Grup</h3>
-    <div class="options">
-      <label>Grup: </label>
-      <select id="grupSelect" onchange="updateGrupTable()">
-        <option value="A">Grup A</option>
-        <option value="B">Grup B</option>
-        <option value="C">Grup C</option>
-        <option value="D">Grup D</option>
-      </select>
+    <div class="options" id="grupOptions">
+      <button class="active" onclick="setGrup('A')">Grup A</button>
+      <button onclick="setGrup('B')">Grup B</button>
+      <button onclick="setGrup('C')">Grup C</button>
+      <button onclick="setGrup('D')">Grup D</button>
     </div>
     <table id="grupTable">
       <thead></thead>
@@ -99,23 +89,15 @@ td.score { font-weight:bold; color:#005BBB; }
 </div>
 
 <script>
-// Data dummy Skor Pertandingan (putaran 1)
+// Data dummy Skor Pertandingan
 const matchData = {
-  1: ["Tim A","2","1","Tim B"],
-  2: ["Tim C","0","3","Tim D"],
-  3: ["Tim E","1","1","Tim F"],
-  4: ["Tim G","3","2","Tim H"],
-  5: ["Tim I","2","2","Tim J"],
-  6: ["Tim K","0","1","Tim L"]
+  1:["Tim A","2","1","Tim B"],
+  2:["Tim C","0","3","Tim D"],
+  3:["Tim E","1","1","Tim F"],
+  4:["Tim G","3","2","Tim H"],
+  5:["Tim I","2","2","Tim J"],
+  6:["Tim K","0","1","Tim L"]
 };
-
-// Fungsi update tabel skor pertandingan
-function updateMatchTable(){
-  const match = document.getElementById("matchSelect").value;
-  const tbody = document.querySelector("#matchTable tbody");
-  const data = matchData[match];
-  tbody.innerHTML = `<tr><td>${data[0]}</td><td class="score">${data[1]}</td><td class="score">${data[2]}</td><td>${data[3]}</td></tr>`;
-}
 
 // Data dummy Grup
 const grupData = {
@@ -125,18 +107,36 @@ const grupData = {
   "D":[["Tim13",3,2,1,0,5,7],["Tim14",3,1,0,2,3,3]]
 };
 
-// Fungsi update tabel grup
-function updateGrupTable(){
-  const grup = document.getElementById("grupSelect").value;
+// Fungsi update tabel
+function updateMatchTable(match){
+  const tbody = document.querySelector("#matchTable tbody");
+  const data = matchData[match];
+  tbody.innerHTML = `<tr><td>${data[0]}</td><td class="score">${data[1]}</td><td class="score">${data[2]}</td><td>${data[3]}</td></tr>`;
+}
+
+function updateGrupTable(grup){
   const table = document.getElementById("grupTable");
   const data = grupData[grup];
   table.querySelector("thead").innerHTML = `<tr><th>Tim</th><th>Main</th><th>Menang</th><th>Seri</th><th>Kalah</th><th>Gol</th><th>Point</th></tr>`;
   table.querySelector("tbody").innerHTML = data.map(r=>`<tr>${r.map((c,i)=>i>5?`<td class="score">${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('');
 }
 
-// Init tabel
-updateMatchTable();
-updateGrupTable();
+// Tombol opsi fungsi
+function setMatch(match){
+  updateMatchTable(match);
+  document.querySelectorAll("#matchOptions button").forEach(b=>b.classList.remove("active"));
+  document.querySelector(`#matchOptions button:nth-child(${match})`).classList.add("active");
+}
+
+function setGrup(grup){
+  updateGrupTable(grup);
+  document.querySelectorAll("#grupOptions button").forEach(b=>b.classList.remove("active"));
+  document.querySelector(`#grupOptions button:contains('${grup}')`)?.classList.add("active");
+}
+
+// Inisialisasi
+setMatch(1);
+setGrup('A');
 </script>
 
 </body>
