@@ -1,108 +1,83 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skor Turnamen PES21</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; margin:0; padding:20px; }
-    .container { max-width: 900px; margin: auto; }
-    h2 { text-align: center; margin-bottom: 20px; color: #0078D7; }
-
-    /* Navbar sheet */
-    .navbar {
-      display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
-    }
-    .navbar button {
-      padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer;
-      font-weight: bold; background: #0078D7; color: white; transition: 0.2s;
-    }
-    .navbar button:hover { background: #005BBB; }
-    .navbar button.active { background: #005BBB; transform: scale(1.05); }
-
-    /* Tabel skor */
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-    th { background: #0078D7; color: white; font-size: 16px; }
-    td.team { font-weight: bold; text-align: left; padding-left: 15px; }
-    td.score { font-weight: bold; width: 60px; }
-
-    /* Highlight pemenang */
-    td.win { background-color: #c6f6d5; } /* hijau muda */
-    td.draw { background-color: #fff3c4; } /* kuning muda */
-    td.lose { background-color: #fed7d7; } /* merah muda */
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turnamen PES21 Live</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f6f8; margin:0; padding:20px; }
+  h2 { text-align:center; color:#0078D7; margin-top:30px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom:30px; background:white; }
+  th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+  th { background:#0078D7; color:white; }
+  td.score { font-weight:bold; color:#005BBB; }
+  .container { max-width:1200px; margin:auto; }
+  @media(max-width:768px) { table{ font-size:12px; } th, td{ padding:6px; } }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>Skor Turnamen PES21</h2>
-    <div class="navbar">
-      <button class="active" onclick="changeSheet('DASHBOARD', this)">DASHBOARD</button>
-      <button onclick="changeSheet('JADWAL', this)">JADWAL</button>
-      <button onclick="changeSheet('BAGAN', this)">BAGAN</button>
-      <button onclick="changeSheet('PERATURAN', this)">PERATURAN</button>
-    </div>
+<div class="container">
+  <h2>Turnamen PES21 SMR RT 02 RW 017</h2>
 
-    <table id="scoreTable">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <!-- Kontainer tabel akan diisi JS -->
+  <div id="tables"></div>
+</div>
 
-  <script>
-    const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM";
-    let currentSheet = "DASHBOARD";
+<script>
+const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM";
 
-    async function fetchSheet(sheetName) {
-      try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-        const res = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(text.substring(47, text.length - 2));
-        const cols = json.table.cols.map(c => c.label);
-        const rows = json.table.rows.map(r => r.c.map(cell => cell ? cell.v : ''));
+// Nama sheet sesuai urutan: Grup A–D, Perempat, Semi, Final, Juara
+const SHEETS = [
+  {name:"Grup A", columns:["Tim","Main","Menang","Seri","Kalah","Gol","Point"]},
+  {name:"Grup B", columns:["Tim","Main","Menang","Seri","Kalah","Gol","Point"]},
+  {name:"Grup C", columns:["Tim","Main","Menang","Seri","Kalah","Gol","Point"]},
+  {name:"Grup D", columns:["Tim","Main","Menang","Seri","Kalah","Gol","Point"]},
+  {name:"Perempat Final", columns:["Match","Tim 1","Skor","Tim 2"]},
+  {name:"Semi Final", columns:["Match","Tim 1","Skor","Tim 2"]},
+  {name:"Final", columns:["Match","Tim 1","Skor","Tim 2"]},
+  {name:"Juara", columns:["Peringkat","Tim"]}
+];
 
-        // update header
-        const thead = document.querySelector("#scoreTable thead");
-        thead.innerHTML = `<tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr>`;
+// Fungsi fetch dan parse sheet Google
+async function fetchSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(47, text.length - 2));
+  const cols = json.table.cols.map(c => c.label);
+  const rows = json.table.rows.map(r => r.c.map(cell => cell ? cell.v : ''));
+  return {cols, rows};
+}
 
-        // update body
-        const tbody = document.querySelector("#scoreTable tbody");
-        tbody.innerHTML = rows.map(r => {
-          // contoh asumsi: kolom 1 = tim A, kolom 2 = skor A, kolom 3 = tim B, kolom 4 = skor B
-          const teamA = r[0] || '';
-          const scoreA = r[1] != null ? r[1] : '';
-          const teamB = r[2] || '';
-          const scoreB = r[3] != null ? r[3] : '';
+// Render tabel
+function renderTable(title, cols, rows) {
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  thead.innerHTML = `<tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>`;
+  table.appendChild(thead);
 
-          let scoreAClass = '', scoreBClass = '';
-          if(scoreA !== '' && scoreB !== '') {
-            if(scoreA > scoreB) { scoreAClass='win'; scoreBClass='lose'; }
-            else if(scoreA < scoreB) { scoreAClass='lose'; scoreBClass='win'; }
-            else { scoreAClass='draw'; scoreBClass='draw'; }
-          }
+  const tbody = document.createElement("tbody");
+  rows.forEach(r=>{
+    tbody.innerHTML += `<tr>${r.map(cell=>`<td${cols.includes("Skor")||cols.includes("Point")?" class='score'":""}>${cell}</td>`).join("")}</tr>`;
+  });
+  table.appendChild(tbody);
 
-          return `<tr>
-            <td class="team">${teamA}</td>
-            <td class="score ${scoreAClass}">${scoreA}</td>
-            <td class="team">${teamB}</td>
-            <td class="score ${scoreBClass}">${scoreB}</td>
-          </tr>`;
-        }).join('');
-      } catch(err) {
-        console.error("Error fetch sheet:", err);
-      }
-    }
+  const container = document.getElementById("tables");
+  container.innerHTML += `<h2>${title}</h2>`;
+  container.appendChild(table);
+}
 
-    function changeSheet(sheetName, el) {
-      currentSheet = sheetName;
-      document.querySelectorAll('.navbar button').forEach(btn => btn.classList.remove('active'));
-      el.classList.add('active');
-      fetchSheet(sheetName);
-    }
+// Fetch semua sheet
+async function loadAllSheets() {
+  document.getElementById("tables").innerHTML = ""; // clear dulu
+  for(const sheet of SHEETS){
+    const data = await fetchSheet(sheet.name);
+    renderTable(sheet.name, sheet.columns, data.rows);
+  }
+}
 
-    // fetch sheet awal
-    fetchSheet(currentSheet);
-  </script>
+// Load saat halaman pertama kali
+loadAllSheets();
+</script>
 </body>
 </html>
