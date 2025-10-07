@@ -24,7 +24,7 @@ h2 {
     gap: 20px;
 }
 
-/* Layout untuk bagian atas: skor + grup */
+/* Layout atas: Skor + Grup + Juara */
 .top-panels {
     display: flex;
     gap: 20px;
@@ -111,7 +111,7 @@ td.score {
 
 <div class="dashboard">
 
-    <!-- Bagian atas: Skor + Grup -->
+    <!-- Bagian atas: Skor + Grup + Juara -->
     <div class="top-panels">
         <!-- Skor Pertandingan -->
         <div class="panel">
@@ -130,9 +130,23 @@ td.score {
                 </thead>
                 <tbody></tbody>
             </table>
+
+            <!-- Tabel Tahap Turnamen -->
+            <h3 id="stageTitle">Perempat Final</h3>
+            <div class="options" id="stageOptions">
+                <button class="active" onclick="setStage('quarter')">Perempat Final</button>
+                <button onclick="setStage('semi')">Semi Final</button>
+                <button onclick="setStage('final')">Final</button>
+            </div>
+            <table id="stageTable">
+                <thead>
+                    <tr><th>Tim</th><th colspan="2">Skor</th><th>Tim</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
 
-        <!-- Tabel Grup -->
+        <!-- Tabel Grup + Juara -->
         <div class="panel">
             <h3>Grup</h3>
             <div class="options" id="grupOptions">
@@ -145,9 +159,7 @@ td.score {
                 <thead></thead>
                 <tbody></tbody>
             </table>
-        </div>
-<div>
-    <div class="panel">
+
             <!-- Tabel Juara -->
             <h3>Juara</h3>
             <table id="winnerTable">
@@ -157,22 +169,6 @@ td.score {
                 <tbody></tbody>
             </table>
         </div>
-    </div>
-    </dv>
-    <!-- Tahap Turnamen -->
-    <div class="panel">
-        <h3 id="stageTitle">Perempat Final</h3>
-        <div class="options" id="stageOptions">
-            <button class="active" onclick="setStage('quarter')">Perempat Final</button>
-            <button onclick="setStage('semi')">Semi Final</button>
-            <button onclick="setStage('final')">Final</button>
-        </div>
-        <table id="stageTable">
-            <thead>
-                <tr><th>Tim</th><th colspan="2">Skor</th><th>Tim</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
     </div>
 </div>
 
