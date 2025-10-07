@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -63,6 +64,8 @@ td.score { font-weight:bold; color:#005BBB; }
       <button onclick="setMatch(4)">Match 4</button>
       <button onclick="setMatch(5)">Match 5</button>
       <button onclick="setMatch(6)">Match 6</button>
+      <button onclick="setMatch(7)">Match 7</button>
+      <button onclick="setMatch(8)">Match 8</button>
     </div>
     <table id="matchTable">
       <thead>
@@ -92,19 +95,41 @@ td.score { font-weight:bold; color:#005BBB; }
 // Data dummy Skor Pertandingan
 const matchData = {
   1:["Tim A","2","1","Tim B"],
-  2:["Tim C","0","3","Tim D"],
-  3:["Tim E","1","1","Tim F"],
-  4:["Tim G","3","2","Tim H"],
-  5:["Tim I","2","2","Tim J"],
-  6:["Tim K","0","1","Tim L"]
+  2:["Tim C","3","3","Tim D"],
+  3:["Tim E","1","0","Tim F"],
+  4:["Tim G","2","4","Tim H"],
+  5:["Tim I","0","2","Tim J"],
+  6:["Tim K","3","1","Tim L"],
+  7:["Tim M","2","2","Tim N"],
+  8:["Tim O","1","3","Tim P"]
 };
 
-// Data dummy Grup
+// Data dummy Grup (4 tim per grup)
 const grupData = {
-  "A":[["Tim 1",3,2,0,1,5,6],["Tim 2",3,1,1,1,4,4]],
-  "B":[["Tim 5",3,2,1,0,6,7],["Tim 6",3,1,0,2,3,3]],
-  "C":[["Tim 9",3,3,0,0,8,9],["Tim10",3,1,1,1,4,4]],
-  "D":[["Tim13",3,2,1,0,5,7],["Tim14",3,1,0,2,3,3]]
+  "A":[
+    ["Tim A",3,2,1,0,7,7],
+    ["Tim B",3,1,1,1,4,4],
+    ["Tim C",3,1,0,2,3,3],
+    ["Tim D",3,0,2,1,2,2]
+  ],
+  "B":[
+    ["Tim E",3,2,1,0,6,7],
+    ["Tim F",3,2,0,1,5,6],
+    ["Tim G",3,1,0,2,3,3],
+    ["Tim H",3,0,1,2,2,1]
+  ],
+  "C":[
+    ["Tim I",3,3,0,0,8,9],
+    ["Tim J",3,2,1,0,6,7],
+    ["Tim K",3,1,0,2,3,3],
+    ["Tim L",3,0,1,2,2,1]
+  ],
+  "D":[
+    ["Tim M",3,2,1,0,7,7],
+    ["Tim N",3,1,1,1,4,4],
+    ["Tim O",3,1,0,2,3,3],
+    ["Tim P",3,0,1,2,2,1]
+  ]
 };
 
 // Fungsi update tabel
@@ -131,7 +156,8 @@ function setMatch(match){
 function setGrup(grup){
   updateGrupTable(grup);
   document.querySelectorAll("#grupOptions button").forEach(b=>b.classList.remove("active"));
-  document.querySelector(`#grupOptions button:contains('${grup}')`)?.classList.add("active");
+  document.querySelector(`#grupOptions button`).textContent === `Grup ${grup}`;
+  document.querySelector(`#grupOptions button:nth-child(${['A','B','C','D'].indexOf(grup)+1})`).classList.add("active");
 }
 
 // Inisialisasi
@@ -141,3 +167,4 @@ setGrup('A');
 
 </body>
 </html>
+```
