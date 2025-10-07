@@ -3,20 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Turnamen PES21 SMR RT 02 RW 017</title>
+  <title>Skor Turnamen PES21</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; margin:0; padding:0; }
-    .container { padding: 10px; }
-    .navbar { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-    .navbar button { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; background: #0078D7; color: white; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; margin:0; padding:20px; }
+    .container { max-width: 900px; margin: auto; }
+    h2 { text-align: center; margin-bottom: 20px; color: #0078D7; }
+
+    /* Navbar sheet */
+    .navbar {
+      display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .navbar button {
+      padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer;
+      font-weight: bold; background: #0078D7; color: white; transition: 0.2s;
+    }
+    .navbar button:hover { background: #005BBB; }
     .navbar button.active { background: #005BBB; transform: scale(1.05); }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #0078D7; color: white; }
+
+    /* Tabel skor */
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #0078D7; color: white; font-size: 16px; }
+    td.team { font-weight: bold; text-align: left; padding-left: 15px; }
+    td.score { font-weight: bold; width: 60px; }
+
+    /* Highlight pemenang */
+    td.win { background-color: #c6f6d5; } /* hijau muda */
+    td.draw { background-color: #fff3c4; } /* kuning muda */
+    td.lose { background-color: #fed7d7; } /* merah muda */
   </style>
 </head>
 <body>
   <div class="container">
+    <h2>Skor Turnamen PES21</h2>
     <div class="navbar">
       <button class="active" onclick="changeSheet('DASHBOARD', this)">DASHBOARD</button>
       <button onclick="changeSheet('JADWAL', this)">JADWAL</button>
@@ -24,7 +43,7 @@
       <button onclick="changeSheet('PERATURAN', this)">PERATURAN</button>
     </div>
 
-    <table id="sheetTable">
+    <table id="scoreTable">
       <thead></thead>
       <tbody></tbody>
     </table>
@@ -43,12 +62,34 @@
         const cols = json.table.cols.map(c => c.label);
         const rows = json.table.rows.map(r => r.c.map(cell => cell ? cell.v : ''));
 
-        const thead = document.querySelector("#sheetTable thead");
+        // update header
+        const thead = document.querySelector("#scoreTable thead");
         thead.innerHTML = `<tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr>`;
 
-        const tbody = document.querySelector("#sheetTable tbody");
-        tbody.innerHTML = rows.map(r => `<tr>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
-      } catch (err) {
+        // update body
+        const tbody = document.querySelector("#scoreTable tbody");
+        tbody.innerHTML = rows.map(r => {
+          // contoh asumsi: kolom 1 = tim A, kolom 2 = skor A, kolom 3 = tim B, kolom 4 = skor B
+          const teamA = r[0] || '';
+          const scoreA = r[1] != null ? r[1] : '';
+          const teamB = r[2] || '';
+          const scoreB = r[3] != null ? r[3] : '';
+
+          let scoreAClass = '', scoreBClass = '';
+          if(scoreA !== '' && scoreB !== '') {
+            if(scoreA > scoreB) { scoreAClass='win'; scoreBClass='lose'; }
+            else if(scoreA < scoreB) { scoreAClass='lose'; scoreBClass='win'; }
+            else { scoreAClass='draw'; scoreBClass='draw'; }
+          }
+
+          return `<tr>
+            <td class="team">${teamA}</td>
+            <td class="score ${scoreAClass}">${scoreA}</td>
+            <td class="team">${teamB}</td>
+            <td class="score ${scoreBClass}">${scoreB}</td>
+          </tr>`;
+        }).join('');
+      } catch(err) {
         console.error("Error fetch sheet:", err);
       }
     }
@@ -60,7 +101,7 @@
       fetchSheet(sheetName);
     }
 
-    // fetch sheet saat halaman load pertama kali
+    // fetch sheet awal
     fetchSheet(currentSheet);
   </script>
 </body>
