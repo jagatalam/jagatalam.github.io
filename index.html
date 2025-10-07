@@ -5,30 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Turnamen PES21 SMR RT 02 RW 017</title>
   <style>
-    /* Reset dasar */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      height: 100%;
-      width: 100%;
+      height: 100%; width: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
       background-color: #f4f6f8;
       overflow: hidden;
     }
-
-    /* Container utama */
     .container {
       display: flex;
       flex-direction: column;
       height: 100vh;
       width: 100vw;
     }
-
-    /* Navigasi atas */
     .navbar {
       display: flex;
       justify-content: center;
@@ -40,7 +29,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       z-index: 10;
     }
-
     .navbar button {
       background: white;
       color: #0078D7;
@@ -52,19 +40,15 @@
       cursor: pointer;
       transition: all 0.25s ease;
     }
-
     .navbar button:hover {
       background: #e6f0ff;
       transform: translateY(-2px);
     }
-
     .navbar button.active {
       background: #005BBB;
       color: white;
       transform: scale(1.05);
     }
-
-    /* Area iframe */
     .sheet-area {
       flex: 1;
       width: 100%;
@@ -72,30 +56,19 @@
       overflow: hidden;
       background: white;
     }
-
     iframe {
       width: 100%;
       height: 100%;
       border: none;
     }
-
-    /* Responsif di HP */
     @media (max-width: 768px) {
-      .navbar {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .navbar button {
-        font-size: 13px;
-        padding: 8px 14px;
-      }
+      .navbar { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+      .navbar button { font-size: 13px; padding: 8px 14px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Navigasi antar sheet -->
     <div class="navbar">
       <button class="active" onclick="loadSheet(1781803540, this)">DASHBOARD</button>
       <button onclick="loadSheet(1364893889, this)">JADWAL</button>
@@ -103,26 +76,33 @@
       <button onclick="loadSheet(1460671336, this)">PERATURAN</button>
     </div>
 
-    <!-- Area tampilan sheet -->
     <div class="sheet-area">
       <iframe 
         id="sheetFrame" 
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml?widget=true&amp;headers=false""
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml?gid=1781803540&single=true&widget=true&headers=false"
         allowfullscreen>
       </iframe>
     </div>
   </div>
 
   <script>
+    const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml";
+    let currentGid = 1781803540;
+
     function loadSheet(gid, el) {
-      const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml";
+      currentGid = gid;
       const frame = document.getElementById("sheetFrame");
       frame.src = `${base}?gid=${gid}&single=true&widget=true&headers=false`;
-
-      // ganti tombol aktif
       document.querySelectorAll('.navbar button').forEach(btn => btn.classList.remove('active'));
       el.classList.add('active');
     }
+
+    // 🔄 Auto-refresh iframe setiap 1 detik
+    setInterval(() => {
+      const frame = document.getElementById("sheetFrame");
+      const src = `${base}?gid=${currentGid}&single=true&widget=true&headers=false&t=${Date.now()}`;
+      frame.src = src;
+    }, 1000); // 1 detik
   </script>
 </body>
 </html>
