@@ -110,7 +110,20 @@ td.score {
 <h2>Dashboard Turnamen PES21</h2>
 
 <div class="dashboard">
-
+<!-- Tabel Grup + Juara -->
+        <div class="panel">
+            <h3>Grup</h3>
+            <div class="options" id="grupOptions">
+                <button class="active" onclick="setGrup('A')">Grup A</button>
+                <button onclick="setGrup('B')">Grup B</button>
+                <button onclick="setGrup('C')">Grup C</button>
+                <button onclick="setGrup('D')">Grup D</button>
+            </div>
+            <table id="grupTable">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     <!-- Bagian atas: Skor + Grup + Juara -->
     <div class="top-panels">
         <!-- Skor Pertandingan -->
@@ -147,20 +160,7 @@ td.score {
             </table>
         </div>
         </div>
-        <!-- Tabel Grup + Juara -->
-        <div class="panel">
-            <h3>Grup</h3>
-            <div class="options" id="grupOptions">
-                <button class="active" onclick="setGrup('A')">Grup A</button>
-                <button onclick="setGrup('B')">Grup B</button>
-                <button onclick="setGrup('C')">Grup C</button>
-                <button onclick="setGrup('D')">Grup D</button>
-            </div>
-            <table id="grupTable">
-                <thead></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+        
 
             <!-- Tabel Juara -->
             <div class="panel">
