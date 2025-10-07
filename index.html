@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Turnamen PES21 (Demo)</title>
+<title>Dashboard Turnamen PES21</title>
 <style>
 body { font-family:"Segoe UI", Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
-h2 { text-align:center; color:#0078D7; margin-top:20px; }
+h2 { text-align:center; color:#0078D7; margin-top:20px; margin-bottom:20px; }
 .dashboard { display:flex; gap:20px; flex-wrap:wrap; }
 .panel { flex:1; min-width:300px; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
 table { width:100%; border-collapse:collapse; margin-bottom:10px; }
@@ -19,16 +19,13 @@ td.score { font-weight:bold; color:#005BBB; }
 </head>
 <body>
 
-<h2>Dashboard Turnamen PES21 (Demo)</h2>
+<h2>Dashboard Turnamen PES21</h2>
 
 <div class="dashboard">
   <!-- Skor Pertandingan -->
   <div class="panel">
     <h3>Skor Pertandingan</h3>
     <div class="options">
-      <div>
-        
-      </div>
       <div>
         <label>Match: </label>
         <select id="matchSelect" onchange="updateMatchTable()">
@@ -69,31 +66,22 @@ td.score { font-weight:bold; color:#005BBB; }
 </div>
 
 <script>
-// Data dummy Skor Pertandingan
+// Data dummy Skor Pertandingan (putaran 1)
 const matchData = {
-  1: {
-    1:["Tim A","2","1","Tim B"],
-    2:["Tim C","0","3","Tim D"],
-    3:["Tim E","1","1","Tim F"],
-    4:["Tim G","3","2","Tim H"],
-    5:["Tim I","2","2","Tim J"],
-    6:["Tim K","0","1","Tim L"]
-  },
-  2: {
-    1:["Tim A","1","0","Tim B"],
-    2:["Tim C","2","2","Tim D"],
-    3:["Tim E","0","1","Tim F"],
-    4:["Tim G","1","3","Tim H"],
-    5:["Tim I","3","0","Tim J"],
-    6:["Tim K","2","2","Tim L"]
-  }
+  1: ["Tim A","2","1","Tim B"],
+  2: ["Tim C","0","3","Tim D"],
+  3: ["Tim E","1","1","Tim F"],
+  4: ["Tim G","3","2","Tim H"],
+  5: ["Tim I","2","2","Tim J"],
+  6: ["Tim K","0","1","Tim L"]
 };
 
+// Fungsi update tabel skor pertandingan
 function updateMatchTable(){
-  
+  const putaran = 1; // Putaran default
   const match = document.getElementById("matchSelect").value;
   const tbody = document.querySelector("#matchTable tbody");
-  const data = matchData[putaran][match];
+  const data = matchData[match];
   tbody.innerHTML = `<tr><td>${data[0]}</td><td class="score">${data[1]}</td><td class="score">${data[2]}</td><td>${data[3]}</td></tr>`;
 }
 
@@ -105,6 +93,7 @@ const grupData = {
   "D":[["Tim13",3,2,1,0,5,7],["Tim14",3,1,0,2,3,3]]
 };
 
+// Fungsi update tabel grup
 function updateGrupTable(){
   const grup = document.getElementById("grupSelect").value;
   const table = document.getElementById("grupTable");
