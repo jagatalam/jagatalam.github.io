@@ -3,124 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Live Turnamen PES21</title>
+<title>Dashboard Turnamen PES21</title>
 <style>
-body { font-family: "Segoe UI", Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
-h2 { text-align:center; color:#0078D7; margin-top:20px; }
-.dashboard { display:flex; gap:20px; flex-wrap:wrap; }
-.panel { flex:1; min-width:300px; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-table { width:100%; border-collapse:collapse; margin-bottom:10px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:center; }
-th { background:#0078D7; color:white; }
-td.score { font-weight:bold; color:#005BBB; }
-.options { display:flex; justify-content:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-@media(max-width:768px){ .dashboard{flex-direction:column;} table{ font-size:12px; } th, td{ padding:6px; } }
+  body { font-family: "Segoe UI", Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
+  h2 { text-align:center; color:#0078D7; margin-top:20px; }
+  .navbar { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .navbar button { padding:8px 16px; border-radius:20px; border:none; cursor:pointer; font-weight:bold; background:#0078D7; color:white; transition:0.2s; }
+  .navbar button.active { background:#005BBB; transform:scale(1.05);}
+  .dashboard { display:flex; gap:20px; flex-wrap:wrap; }
+  .panel { flex:1; min-width:300px; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+  table { width:100%; border-collapse:collapse; margin-bottom:10px; }
+  th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+  th { background:#0078D7; color:white; }
+  td.score { font-weight:bold; color:#005BBB; }
+  .options { display:flex; justify-content:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  @media(max-width:768px){ .dashboard{flex-direction:column;} table{ font-size:12px; } th, td{ padding:6px; } }
 </style>
 </head>
 <body>
 
-<h2>Dashboard Live Turnamen PES21</h2>
+<div class="container">
+  <h2>Dashboard Turnamen PES21</h2>
 
-<div class="dashboard">
-  <!-- Skor Pertandingan -->
-  <div class="panel">
-    <h3>Skor Pertandingan</h3>
-    <div class="options">
-      <div>
-        <label>Putaran: </label>
-        <select id="putaranSelect" onchange="loadMatchData()">
-          <option value="1">Putaran 1</option>
-          <option value="2">Putaran 2</option>
+  <!-- Dashboard Layout -->
+  <div class="dashboard">
+    <!-- Skor Pertandingan -->
+    <div class="panel">
+      <h3>Skor Pertandingan</h3>
+      <div class="options">
+        <div>
+          <label>Putaran: </label>
+          <select id="putaranSelect" onchange="updateMatchTable()">
+            <option value="1">Putaran 1</option>
+            <option value="2">Putaran 2</option>
+          </select>
+        </div>
+        <div>
+          <label>Match: </label>
+          <select id="matchSelect" onchange="updateMatchTable()">
+            <option value="1">Match 1</option>
+            <option value="2">Match 2</option>
+            <option value="3">Match 3</option>
+            <option value="4">Match 4</option>
+            <option value="5">Match 5</option>
+            <option value="6">Match 6</option>
+          </select>
+        </div>
+      </div>
+      <table id="matchTable">
+        <thead>
+          <tr>
+            <th>Tim A</th>
+            <th colspan="2">Skor</th>
+            <th>Tim B</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>Skor A</th>
+            <th>Skor B</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Tabel Grup -->
+    <div class="panel">
+      <h3>Grup</h3>
+      <div class="options">
+        <label>Grup: </label>
+        <select id="grupSelect" onchange="updateGrupTable()">
+          <option value="A">Grup A</option>
+          <option value="B">Grup B</option>
+          <option value="C">Grup C</option>
+          <option value="D">Grup D</option>
         </select>
       </div>
-      <div>
-        <label>Match: </label>
-        <select id="matchSelect" onchange="loadMatchData()">
-          <option value="1">Match 1</option>
-          <option value="2">Match 2</option>
-          <option value="3">Match 3</option>
-          <option value="4">Match 4</option>
-          <option value="5">Match 5</option>
-          <option value="6">Match 6</option>
-        </select>
-      </div>
+      <table id="grupTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
-    <table id="matchTable">
-      <thead>
-        <tr>
-          <th>Tim A</th>
-          <th colspan="2">Skor</th>
-          <th>Tim B</th>
-        </tr>
-        <tr>
-          <th></th>
-          <th>Skor A</th>
-          <th>Skor B</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- Grup -->
-  <div class="panel">
-    <h3>Grup</h3>
-    <div class="options">
-      <label>Grup: </label>
-      <select id="grupSelect" onchange="loadGrupData()">
-        <option value="A">Grup A</option>
-        <option value="B">Grup B</option>
-        <option value="C">Grup C</option>
-        <option value="D">Grup D</option>
-      </select>
-    </div>
-    <table id="grupTable">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
   </div>
 </div>
 
 <script>
-// Ganti dengan Google Sheet ID-mu
-const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM";
+// Placeholder data Skor Pertandingan
+const matchData = {
+  1: {1:["Tim A","2","1","Tim B"],2:["Tim C","0","3","Tim D"],3:["Tim E","1","1","Tim F"],4:["Tim G","3","2","Tim H"],5:["Tim I","2","2","Tim J"],6:["Tim K","0","1","Tim L"]},
+  2: {1:["Tim A","1","0","Tim B"],2:["Tim C","2","2","Tim D"],3:["Tim E","0","1","Tim F"],4:["Tim G","1","3","Tim H"],5:["Tim I","3","0","Tim J"],6:["Tim K","2","2","Tim L"]}
+};
 
-// Fungsi fetch data Google Sheet
-async function fetchSheet(sheetName){
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-  const res = await fetch(url);
-  const text = await res.text();
-  const json = JSON.parse(text.substring(47, text.length-2));
-  const rows = json.table.rows.map(r=>r.c.map(cell=>cell?cell.v:''));
-  return rows;
-}
-
-// Load data match
-async function loadMatchData(){
+function updateMatchTable(){
   const putaran = document.getElementById("putaranSelect").value;
   const match = document.getElementById("matchSelect").value;
-  const sheetName = `Skor_Putaran${putaran}`; // pastikan sheet sesuai format ini
-  const rows = await fetchSheet(sheetName);
-  // Filter match
-  const data = rows.filter(r=>r[0]==`Match ${match}`);
   const tbody = document.querySelector("#matchTable tbody");
-  tbody.innerHTML = data.map(r=>`<tr><td>${r[1]}</td><td class="score">${r[2]}</td><td class="score">${r[3]}</td><td>${r[4]}</td></tr>`).join('');
+  const data = matchData[putaran][match];
+  tbody.innerHTML = `<tr><td>${data[0]}</td><td class="score">${data[1]}</td><td class="score">${data[2]}</td><td>${data[3]}</td></tr>`;
 }
 
-// Load data grup
-async function loadGrupData(){
+// Placeholder data Grup
+const grupData = {
+  "A":[["Tim 1",3,2,0,1,5,6],["Tim 2",3,1,1,1,4,4]],
+  "B":[["Tim 5",3,2,1,0,6,7],["Tim 6",3,1,0,2,3,3]],
+  "C":[["Tim 9",3,3,0,0,8,9],["Tim10",3,1,1,1,4,4]],
+  "D":[["Tim13",3,2,1,0,5,7],["Tim14",3,1,0,2,3,3]]
+};
+
+function updateGrupTable(){
   const grup = document.getElementById("grupSelect").value;
-  const sheetName = `Grup_${grup}`;
-  const rows = await fetchSheet(sheetName);
   const table = document.getElementById("grupTable");
-  table.querySelector("thead").innerHTML = `<tr>${rows[0].map(h=>`<th>${h}</th>`).join('')}</tr>`;
-  table.querySelector("tbody").innerHTML = rows.slice(1).map(r=>`<tr>${r.map((c,i)=>i>5?`<td class="score">${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('');
+  const data = grupData[grup];
+  table.querySelector("thead").innerHTML = `<tr><th>Tim</th><th>Main</th><th>Menang</th><th>Seri</th><th>Kalah</th><th>Gol</th><th>Point</th></tr>`;
+  table.querySelector("tbody").innerHTML = data.map(r=>`<tr>${r.map((c,i)=>i>5?`<td class="score">${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('');
 }
 
-// Init tabel saat load halaman
-loadMatchData();
-loadGrupData();
+// Init tabel
+updateMatchTable();
+updateGrupTable();
 </script>
 
 </body>
