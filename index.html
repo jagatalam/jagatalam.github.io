@@ -5,38 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Pembayaran Warga</title>
   <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f8fafc;
+    html, body {
+      height: 100%;
       margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    header {
-      background: #0078d7;
-      color: white;
-      padding: 20px;
-      font-size: 1.5em;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden;
+      overflow: hidden; /* Hilangkan scroll */
     }
     iframe {
-      width: 100%;
-      height: 700px;
-      border: none;
-    }
-    footer {
-      color: #666;
-      font-size: 0.9em;
-      padding: 20px;
+      width: 100vw;      /* Lebar penuh layar */
+      height: 100vh;     /* Tinggi penuh layar */
+      border: none;      /* Hilangkan border iframe */
     }
   </style>
 </head>
