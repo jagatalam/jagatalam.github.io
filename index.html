@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Pembayaran Warga</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f8fafc;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #0078d7;
+      color: white;
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    iframe {
+      width: 100%;
+      height: 700px;
+      border: none;
+    }
+    footer {
+      color: #666;
+      font-size: 0.9em;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>📊 Dashboard Pembayaran Warga</header>
+  <div class="container">
+    <iframe id="sheetFrame"
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml?gid=0&single=true&widget=false&headers=false">
+    </iframe>
+  </div>
+  <footer>Otomatis diperbarui setiap 60 detik • © 2025 Jagat Alam</footer>
+
+  <script>
+    // Auto refresh setiap 60 detik biar selalu versi terbaru
+    setInterval(() => {
+      const f = document.getElementById('sheetFrame');
+      const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml";
+      f.src = `${base}?gid=0&single=true&widget=false&headers=false&cb=${Date.now()}`;
+    }, 60000);
+  </script>
+</body>
+</html>
