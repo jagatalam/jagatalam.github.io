@@ -146,14 +146,15 @@ td.score {
 </div>
 <script>
 function goPage(url, btn){
-    // Buka halaman di tab baru
-    window.open(url, '_blank');
+    // Buka halaman di tab yang sama
+    window.location.href = url;
 
     // Set tombol aktif
     document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 }
 </script>
+
 <div class="dashboard">
     <!-- Tabel Grup -->
     <div class="panel">
