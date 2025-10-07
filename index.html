@@ -11,148 +11,30 @@ body {
     margin: 0;
     padding: 20px;
 }
-h2 {
-    text-align: center;
-    color: #0078D7;
-    margin: 20px 0;
-}
-/* Tombol Navigasi */
-.nav-buttons {
-    text-align:center; 
-    margin-bottom:20px;
-}
-.nav-buttons button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    border-radius: 25px;
-    border: none;
-    background: linear-gradient(145deg, #0078D7, #0094FF);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.nav-buttons button:hover {
-    background: linear-gradient(145deg, #005BBB, #0078D7);
-    transform: translateY(-2px) scale(1.05);
-}
-.nav-buttons button.active {
-    background: #005BBB;
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-/* Dashboard */
-.dashboard {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-/* Layout atas: Skor + Grup + Juara */
-.top-panels {
-    display: flex;
-    gap: 20px;
-}
-/* Panel */
-.panel {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    flex: 1;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-}
-th, td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
-}
-th {
-    background: #0078D7;
-    color: white;
-}
-td.score {
-    font-weight: bold;
-    color: #005BBB;
-}
-.options {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
-.options button {
-    padding: 8px 16px;
-    border-radius: 25px;
-    border: none;
-    background: linear-gradient(145deg, #0078D7, #0094FF);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.options button:hover {
-    background: linear-gradient(145deg, #005BBB, #0078D7);
-    transform: translateY(-2px) scale(1.05);
-}
-.options button.active {
-    background: #005BBB;
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-@media(max-width:768px){
-    .top-panels {
-        flex-direction: column;
-    }
-    table {
-        font-size: 12px;
-    }
-    th, td {
-        padding: 6px;
-    }
-}
+h2 { text-align: center; color: #0078D7; margin: 20px 0; }
+.dashboard { display: flex; flex-direction: column; gap: 20px; }
+.top-panels { display: flex; gap: 20px; }
+.panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex: 1; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+th { background: #0078D7; color: white; }
+td.score { font-weight: bold; color: #005BBB; }
+.options { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.options button { padding: 8px 16px; border-radius: 25px; border: none; background: linear-gradient(145deg, #0078D7, #0094FF); color: white; font-weight: bold; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.options button:hover { background: linear-gradient(145deg, #005BBB, #0078D7); transform: translateY(-2px) scale(1.05); }
+.options button.active { background: #005BBB; transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+@media(max-width:768px){ .top-panels { flex-direction: column; } table { font-size: 12px; } th, td { padding: 6px; } }
 </style>
-
-<!-- Tabletop.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js"></script>
-
 </head>
 <body>
 
 <h2>Dashboard Turnamen PES21</h2>
 
-<!-- Tombol Navigasi -->
-<div class="nav-buttons">
-    <button onclick="goPage('https://jagatalam.github.io/dashboard.html', this)">Dashboard</button>
-    <button onclick="goPage('https://jagatalam.github.io/jadwal.html', this)">Jadwal</button>
-    <button onclick="goPage('https://jagatalam.github.io/bagan.html', this)">Bagan</button>
-    <button onclick="goPage('https://jagatalam.github.io/peraturan.html', this)">Peraturan</button>
-</div>
-
 <div class="dashboard">
-    <!-- Tabel Grup -->
-    <div class="panel">
-        <h3>Grup</h3>
-        <div class="options" id="grupOptions">
-            <button class="active" onclick="setGrup('A')">Grup A</button>
-            <button onclick="setGrup('B')">Grup B</button>
-            <button onclick="setGrup('C')">Grup C</button>
-            <button onclick="setGrup('D')">Grup D</button>
-        </div>
-        <table id="grupTable">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
-    </div>
 
-    <!-- Bagian atas: Skor + Tahap Turnamen -->
+    <!-- Bagian atas: Skor + Grup -->
     <div class="top-panels">
+
         <!-- Skor Pertandingan -->
         <div class="panel">
             <h3 id="matchTitle">Skor Pertandingan</h3>
@@ -172,21 +54,21 @@ td.score {
             </table>
         </div>
 
-        <!-- Tabel Tahap Turnamen -->
+        <!-- Tabel Grup -->
         <div class="panel">
-            <h3 id="stageTitle">Perempat Final</h3>
-            <div class="options" id="stageOptions">
-                <button class="active" onclick="setStage('quarter')">Perempat Final</button>
-                <button onclick="setStage('semi')">Semi Final</button>
-                <button onclick="setStage('final')">Final</button>
+            <h3>Grup</h3>
+            <div class="options" id="grupOptions">
+                <button class="active" onclick="setGrup('A')">Grup A</button>
+                <button onclick="setGrup('B')">Grup B</button>
+                <button onclick="setGrup('C')">Grup C</button>
+                <button onclick="setGrup('D')">Grup D</button>
             </div>
-            <table id="stageTable">
-                <thead>
-                    <tr><th>Tim</th><th colspan="2">Skor</th><th>Tim</th></tr>
-                </thead>
+            <table id="grupTable">
+                <thead></thead>
                 <tbody></tbody>
             </table>
         </div>
+
     </div>
 
     <!-- Tabel Juara -->
@@ -199,91 +81,110 @@ td.score {
             <tbody></tbody>
         </table>
     </div>
+
+    <!-- Tahap Turnamen -->
+    <div class="panel">
+        <h3 id="stageTitle">Perempat Final</h3>
+        <div class="options" id="stageOptions">
+            <button class="active" onclick="setStage('quarter')">Perempat Final</button>
+            <button onclick="setStage('semi')">Semi Final</button>
+            <button onclick="setStage('final')">Final</button>
+        </div>
+        <table id="stageTable">
+            <thead>
+                <tr><th>Tim</th><th colspan="2">Skor</th><th>Tim</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
 </div>
 
 <script>
-const publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml';
+// ----------------------------
+// Dummy Data Skor Pertandingan
+// ----------------------------
+const matchData = {
+    1: [["Tim A1","2","1","Tim B1"],["Tim A2","1","0","Tim B2"],["Tim A3","3","2","Tim B3"],["Tim A4","0","0","Tim B4"],["Tim A5","4","1","Tim B5"],["Tim A6","2","3","Tim B6"],["Tim A7","1","1","Tim B7"],["Tim A8","3","0","Tim B8"]],
+    2: [["Tim C1","1","1","Tim D1"],["Tim C2","2","0","Tim D2"],["Tim C3","0","3","Tim D3"],["Tim C4","3","2","Tim D4"],["Tim C5","1","4","Tim D5"],["Tim C6","2","2","Tim D6"],["Tim C7","0","1","Tim D7"],["Tim C8","3","3","Tim D8"]],
+    3: [["Tim E1","0","2","Tim F1"],["Tim E2","2","2","Tim F2"],["Tim E3","1","0","Tim F3"],["Tim E4","4","3","Tim F4"],["Tim E5","2","1","Tim F5"],["Tim E6","3","0","Tim F6"],["Tim E7","1","3","Tim F7"],["Tim E8","0","0","Tim F8"]],
+    4: [["Tim G1","2","1","Tim H1"],["Tim G2","3","2","Tim H2"],["Tim G3","0","0","Tim H3"],["Tim G4","1","4","Tim H4"],["Tim G5","2","2","Tim H5"],["Tim G6","0","3","Tim H6"],["Tim G7","3","1","Tim H7"],["Tim G8","1","2","Tim H8"]],
+    5: [["Tim I1","1","0","Tim J1"],["Tim I2","3","3","Tim J2"],["Tim I3","0","4","Tim J3"],["Tim I4","2","2","Tim J4"],["Tim I5","1","3","Tim J5"],["Tim I6","4","1","Tim J6"],["Tim I7","2","0","Tim J7"],["Tim I8","1","2","Tim J8"]],
+    6: [["Tim K1","0","1","Tim L1"],["Tim K2","2","2","Tim L2"],["Tim K3","1","0","Tim L3"],["Tim K4","3","3","Tim L4"],["Tim K5","4","2","Tim L5"],["Tim K6","0","0","Tim L6"],["Tim K7","2","3","Tim L7"],["Tim K8","1","1","Tim L8"]]
+};
 
-function init() {
-    Tabletop.init({
-        key: publicSpreadsheetUrl,
-        simpleSheet: false,
-        wanted: ["match1","match2","match3","match4","match5","match6","grupA","grupB","grupC","grupD","QF","SF","final","juara"],
-        callback: showData
-    });
-}
+// ----------------------------
+// Dummy Data Grup
+// ----------------------------
+const grupData = {
+    "A":[["Tim A1",3,2,1,0,5,3,2,7,1],["Tim A2",3,1,1,1,4,3,1,4,2],["Tim A3",3,1,0,2,3,5,-2,3,3],["Tim A4",3,0,1,2,2,5,-3,1,4]],
+    "B":[["Tim B1",3,3,0,0,7,2,5,9,1],["Tim B2",3,2,0,1,5,3,2,6,2],["Tim B3",3,1,1,1,4,4,0,4,3],["Tim B4",3,0,0,3,2,7,-5,0,4]],
+    "C":[["Tim C1",3,2,0,1,6,4,2,6,1],["Tim C2",3,2,1,0,5,3,2,7,2],["Tim C3",3,1,0,2,3,5,-2,3,3],["Tim C4",3,0,1,2,2,6,-4,1,4]],
+    "D":[["Tim D1",3,3,0,0,9,3,6,9,1],["Tim D2",3,2,1,0,6,4,2,7,2],["Tim D3",3,1,0,2,3,5,-2,3,3],["Tim D4",3,0,0,3,1,8,-7,0,4]]
+};
 
-function showData(data) {
-    window.spreadsheetData = data; // simpan data global
-    setMatch(1);
-    setGrup('A');
-    setStage('quarter');
-    updateWinnerTable();
-}
+// ----------------------------
+// Dummy Data Tahap Turnamen
+// ----------------------------
+const stageData = {
+    quarter: [["Tim A1","2","1","Tim B2"], ["Tim C1","3","2","Tim D2"], ["Tim B1","1","0","Tim A2"], ["Tim D1","2","2","Tim C2"]],
+    semi: [["Tim A1","2","0","Tim C1"], ["Tim B1","1","3","Tim D1"]],
+    final: [["Tim A1","2","2 (4-3p)","Tim D1"], ["Tim C1","1","0","Tim B1"]]
+};
 
-function updateMatchTable(match) {
+// ----------------------------
+// Fungsi Update Tabel
+// ----------------------------
+function updateMatchTable(match){
     const tbody = document.querySelector("#matchTable tbody");
-    const sheetName = 'match' + match;
-    const data = window.spreadsheetData[sheetName].elements;
-    tbody.innerHTML = data.map(d => `<tr><td>${d.Tim1}</td><td class="score">${d.Score1}</td><td class="score">${d.Score2}</td><td>${d.Tim2}</td></tr>`).join('');
+    const data = matchData[match];
+    tbody.innerHTML = data.map(d => `<tr><td>${d[0]}</td><td class="score">${d[1]}</td><td class="score">${d[2]}</td><td>${d[3]}</td></tr>`).join('');
 }
 
-function updateGrupTable(grup) {
+function updateGrupTable(grup){
     const table = document.getElementById("grupTable");
-    const sheetName = 'grup' + grup;
-    const data = window.spreadsheetData[sheetName].elements;
-    table.querySelector("thead").innerHTML = `<tr><th>Tim</th><th>Main</th><th>Menang</th><th>Seri</th><th>Kalah</th><th>Gol</th><th>Point</th></tr>`;
-    table.querySelector("tbody").innerHTML = data.map(r => `<tr><td>${r.Tim}</td><td>${r.Main}</td><td>${r.Menang}</td><td>${r.Seri}</td><td>${r.Kalah}</td><td>${r.Gol}</td><td class="score">${r.Point}</td></tr>`).join('');
+    const data = grupData[grup];
+    table.querySelector("thead").innerHTML = `<tr>
+        <th>NAMA TIM</th><th>MAIN</th><th>MENANG</th><th>SERI</th><th>KALAH</th>
+        <th>GM</th><th>GK</th><th>SELISIH GOL</th><th>POIN</th><th>RANK</th>
+    </tr>`;
+    table.querySelector("tbody").innerHTML = data.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
 }
 
-function updateStageTable(stage) {
+function updateStageTable(stage){
     const tbody = document.querySelector("#stageTable tbody");
-    const sheetName = stage === "quarter" ? 'QF' : stage === "semi" ? 'SF' : 'final';
-    const data = window.spreadsheetData[sheetName].elements;
+    const data = stageData[stage];
     document.getElementById("stageTitle").innerText = stage === "quarter" ? "Perempat Final" : stage === "semi" ? "Semi Final" : "Final";
-    tbody.innerHTML = data.map(d => `<tr><td>${d.Tim1}</td><td class="score">${d.Score1}</td><td class="score">${d.Score2}</td><td>${d.Tim2}</td></tr>`).join('');
+    tbody.innerHTML = data.map(d => `<tr><td>${d[0]}</td><td class="score">${d[1]}</td><td class="score">${d[2]}</td><td>${d[3]}</td></tr>`).join('');
 }
 
-function updateWinnerTable() {
+function updateWinnerTable(){
     const tbody = document.querySelector("#winnerTable tbody");
-    const data = window.spreadsheetData['juara'].elements[0];
+    const finalMatch = stageData.final[0];
+    const winner = finalMatch[1].includes("(") ? finalMatch[0] : finalMatch[1];
+    const runnerUp = finalMatch[1].includes("(") ? finalMatch[3] : finalMatch[0];
+    const semiLoser = stageData.semi.map(m => m[1] < m[2] ? m[0] : m[3]);
     tbody.innerHTML = `
-        <tr><td>Winner</td><td>${data.Winner}</td></tr>
-        <tr><td>2nd Place</td><td>${data.Second}</td></tr>
-        <tr><td>3rd Place</td><td>${data.Third}</td></tr>
+        <tr><td>Winner</td><td>${winner}</td></tr>
+        <tr><td>2nd Place</td><td>${runnerUp}</td></tr>
+        <tr><td>3rd Place</td><td>${semiLoser.join(', ')}</td></tr>
     `;
 }
 
-// Tombol Navigasi
-function goPage(page, btn){
-    window.location.href = page;
-    document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-}
+// ----------------------------
+// Fungsi Tombol
+// ----------------------------
+function setMatch(match){ updateMatchTable(match); document.querySelectorAll("#matchOptions button").forEach(b => b.classList.remove("active")); document.querySelector(`#matchOptions button:nth-child(${match})`).classList.add("active"); }
+function setGrup(grup){ updateGrupTable(grup); document.querySelectorAll("#grupOptions button").forEach(b => b.classList.remove("active")); document.querySelectorAll("#grupOptions button").forEach(btn => { if(btn.textContent.includes(grup)) btn.classList.add("active"); }); }
+function setStage(stage){ updateStageTable(stage); document.querySelectorAll("#stageOptions button").forEach(b => b.classList.remove("active")); if(stage==="quarter") document.querySelector("#stageOptions button:nth-child(1)").classList.add("active"); if(stage==="semi") document.querySelector("#stageOptions button:nth-child(2)").classList.add("active"); if(stage==="final") document.querySelector("#stageOptions button:nth-child(3)").classList.add("active"); }
 
-// Tombol Match / Grup / Stage
-function setMatch(match){
-    updateMatchTable(match);
-    document.querySelectorAll("#matchOptions button").forEach(b => b.classList.remove("active"));
-    document.querySelector(`#matchOptions button:nth-child(${match})`).classList.add("active");
-}
-function setGrup(grup){
-    updateGrupTable(grup);
-    document.querySelectorAll("#grupOptions button").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll("#grupOptions button").forEach(btn => {
-        if(btn.textContent.includes(grup)) btn.classList.add("active");
-    });
-}
-function setStage(stage){
-    updateStageTable(stage);
-    document.querySelectorAll("#stageOptions button").forEach(b => b.classList.remove("active"));
-    if(stage === "quarter") document.querySelector("#stageOptions button:nth-child(1)").classList.add("active");
-    if(stage === "semi") document.querySelector("#stageOptions button:nth-child(2)").classList.add("active");
-    if(stage === "final") document.querySelector("#stageOptions button:nth-child(3)").classList.add("active");
-}
-
+// ----------------------------
 // Inisialisasi
-window.addEventListener('DOMContentLoaded', init);
+// ----------------------------
+setMatch(1);
+setGrup('A');
+setStage('quarter');
+updateWinnerTable();
 </script>
 
 </body>
