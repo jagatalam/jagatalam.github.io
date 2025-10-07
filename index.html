@@ -24,11 +24,19 @@ h2 {
     gap: 20px;
 }
 
+/* Layout untuk bagian atas: skor + grup */
+.top-panels {
+    display: flex;
+    gap: 20px;
+}
+
+/* Panel */
 .panel {
     background: white;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    flex: 1;
 }
 
 table {
@@ -85,7 +93,7 @@ td.score {
 }
 
 @media(max-width:768px){
-    .dashboard {
+    .top-panels {
         flex-direction: column;
     }
     table {
@@ -98,41 +106,55 @@ td.score {
 </style>
 </head>
 <body>
+
 <h2>Dashboard Turnamen PES21</h2>
 
 <div class="dashboard">
-    <!-- Skor Pertandingan -->
-    <div class="panel">
-        <h3 id="matchTitle">Skor Pertandingan</h3>
-        <div class="options" id="matchOptions">
-            <button class="active" onclick="setMatch(1)">Match 1</button>
-            <button onclick="setMatch(2)">Match 2</button>
-            <button onclick="setMatch(3)">Match 3</button>
-            <button onclick="setMatch(4)">Match 4</button>
-            <button onclick="setMatch(5)">Match 5</button>
-            <button onclick="setMatch(6)">Match 6</button>
-        </div>
-        <table id="matchTable">
-            <thead>
-                <tr><th>Tim</th><th colspan="2">Skor</th><th>Tim</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
 
-    <!-- Tabel Grup -->
-    <div class="panel">
-        <h3>Grup</h3>
-        <div class="options" id="grupOptions">
-            <button class="active" onclick="setGrup('A')">Grup A</button>
-            <button onclick="setGrup('B')">Grup B</button>
-            <button onclick="setGrup('C')">Grup C</button>
-            <button onclick="setGrup('D')">Grup D</button>
+    <!-- Bagian atas: Skor + Grup -->
+    <div class="top-panels">
+        <!-- Skor Pertandingan -->
+        <div class="panel">
+            <h3 id="matchTitle">Skor Pertandingan</h3>
+            <div class="options" id="matchOptions">
+                <button class="active" onclick="setMatch(1)">Match 1</button>
+                <button onclick="setMatch(2)">Match 2</button>
+                <button onclick="setMatch(3)">Match 3</button>
+                <button onclick="setMatch(4)">Match 4</button>
+                <button onclick="setMatch(5)">Match 5</button>
+                <button onclick="setMatch(6)">Match 6</button>
+            </div>
+            <table id="matchTable">
+                <thead>
+                    <tr><th>Tim</th><th colspan="2">Skor</th><th>Tim</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-        <table id="grupTable">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
+
+        <!-- Tabel Grup -->
+        <div class="panel">
+            <h3>Grup</h3>
+            <div class="options" id="grupOptions">
+                <button class="active" onclick="setGrup('A')">Grup A</button>
+                <button onclick="setGrup('B')">Grup B</button>
+                <button onclick="setGrup('C')">Grup C</button>
+                <button onclick="setGrup('D')">Grup D</button>
+            </div>
+            <table id="grupTable">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- Tabel Juara -->
+            <h3>Juara</h3>
+            <table id="winnerTable">
+                <thead>
+                    <tr><th>Juara</th><th>Tim</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Tahap Turnamen -->
@@ -207,6 +229,22 @@ function updateStageTable(stage){
     tbody.innerHTML = data.map(d => `<tr><td>${d[0]}</td><td class="score">${d[1]}</td><td class="score">${d[2]}</td><td>${d[3]}</td></tr>`).join('');
 }
 
+function updateWinnerTable(){
+    const tbody = document.querySelector("#winnerTable tbody");
+    const finalMatch = stageData.final[0]; // Ambil final pertama
+    const winner = finalMatch[1].includes("(") ? finalMatch[0] : finalMatch[1]; // Jika ada penalti, ambil skor pemenang
+    const runnerUp = finalMatch[1].includes("(") ? finalMatch[3] : finalMatch[0];
+
+    // 3rd place dari semi-final yang kalah
+    const semiLoser = stageData.semi.map(m => m[1] < m[2] ? m[0] : m[3]);
+    
+    tbody.innerHTML = `
+        <tr><td>Winner</td><td>${winner}</td></tr>
+        <tr><td>2nd Place</td><td>${runnerUp}</td></tr>
+        <tr><td>3rd Place</td><td>${semiLoser.join(', ')}</td></tr>
+    `;
+}
+
 // ----------------------------
 // Fungsi Tombol
 // ----------------------------
@@ -219,8 +257,9 @@ function setMatch(match){
 function setGrup(grup){
     updateGrupTable(grup);
     document.querySelectorAll("#grupOptions button").forEach(b => b.classList.remove("active"));
-    const buttons = document.querySelectorAll("#grupOptions button");
-    buttons.forEach(btn => { if(btn.textContent.includes(grup)) btn.classList.add("active"); });
+    document.querySelectorAll("#grupOptions button").forEach(btn => {
+        if(btn.textContent.includes(grup)) btn.classList.add("active");
+    });
 }
 
 function setStage(stage){
@@ -237,6 +276,8 @@ function setStage(stage){
 setMatch(1);
 setGrup('A');
 setStage('quarter');
+updateWinnerTable();
 </script>
+
 </body>
 </html>
