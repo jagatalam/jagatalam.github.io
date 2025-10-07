@@ -7,18 +7,9 @@
   <style>
     body { font-family: Arial, sans-serif; background: #f4f6f8; margin:0; padding:0; }
     .container { padding: 10px; }
-    .navbar {
-      display: flex; justify-content: center; align-items: center;
-      gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
-    }
-    .navbar button {
-      padding: 8px 16px; border-radius: 20px;
-      border: none; cursor: pointer;
-      font-weight: bold; background: #0078D7; color: white;
-      transition: 0.2s;
-    }
-    .navbar button:hover { background: #005BBB; }
-    .navbar button.active { background: #005BBB; transform: scale(1.05);}
+    .navbar { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .navbar button { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; background: #0078D7; color: white; }
+    .navbar button.active { background: #005BBB; transform: scale(1.05); }
     table { width: 100%; border-collapse: collapse; background: white; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background: #0078D7; color: white; }
@@ -40,7 +31,7 @@
   </div>
 
   <script>
-    const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM"; // ganti dengan spreadsheet kamu
+    const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM";
     let currentSheet = "DASHBOARD";
 
     async function fetchSheet(sheetName) {
@@ -48,15 +39,13 @@
         const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
         const res = await fetch(url);
         const text = await res.text();
-        const json = JSON.parse(text.substring(47, text.length - 2)); // parsing gviz JSON
+        const json = JSON.parse(text.substring(47, text.length - 2));
         const cols = json.table.cols.map(c => c.label);
         const rows = json.table.rows.map(r => r.c.map(cell => cell ? cell.v : ''));
 
-        // update header
         const thead = document.querySelector("#sheetTable thead");
         thead.innerHTML = `<tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr>`;
 
-        // update body
         const tbody = document.querySelector("#sheetTable tbody");
         tbody.innerHTML = rows.map(r => `<tr>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
       } catch (err) {
@@ -71,10 +60,7 @@
       fetchSheet(sheetName);
     }
 
-    // refresh otomatis tiap 1 detik
-    setInterval(() => fetchSheet(currentSheet), 1000);
-
-    // fetch sheet awal
+    // fetch sheet saat halaman load pertama kali
     fetchSheet(currentSheet);
   </script>
 </body>
