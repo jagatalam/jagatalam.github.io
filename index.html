@@ -8,13 +8,46 @@
 body { font-family:"Segoe UI", Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
 h2 { text-align:center; color:#0078D7; margin-top:20px; margin-bottom:20px; }
 .dashboard { display:flex; gap:20px; flex-wrap:wrap; }
-.panel { flex:1; min-width:300px; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+.panel { flex:1; min-width:300px; background:white; padding:15px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
 table { width:100%; border-collapse:collapse; margin-bottom:10px; }
 th, td { border:1px solid #ccc; padding:8px; text-align:center; }
 th { background:#0078D7; color:white; }
 td.score { font-weight:bold; color:#005BBB; }
+
+/* Options modern */
 .options { display:flex; justify-content:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-@media(max-width:768px){ .dashboard{flex-direction:column;} table{ font-size:12px; } th, td{ padding:6px; } }
+
+.options select {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: 2px solid #0078D7;
+  background: linear-gradient(145deg, #e6f0ff, #ffffff);
+  color: #0078D7;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  outline: none;
+}
+
+.options select:hover {
+  background: linear-gradient(145deg, #ffffff, #e6f0ff);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+}
+
+.options select:focus {
+  border-color: #005BBB;
+  box-shadow: 0 0 10px rgba(0,91,187,0.4);
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .dashboard{flex-direction:column;} 
+  table{ font-size:12px; } 
+  th, td{ padding:6px; } 
+}
 </style>
 </head>
 <body>
@@ -78,7 +111,6 @@ const matchData = {
 
 // Fungsi update tabel skor pertandingan
 function updateMatchTable(){
-  const putaran = 1; // Putaran default
   const match = document.getElementById("matchSelect").value;
   const tbody = document.querySelector("#matchTable tbody");
   const data = matchData[match];
