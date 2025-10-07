@@ -86,34 +86,7 @@
     </div>
 </div>
 
-<script>
-    // Fungsi navigasi sederhana tanpa reload
-    function showPage(page) {
-        const content = document.getElementById('content');
-        switch(page) {
-            case 'home':
-                content.innerHTML = `
-                    <h2>Home</h2>
-                    <p>Ini adalah halaman Home. Anda dapat menambahkan konten apa saja di sini.</p>
-                `;
-                break;
-            case 'about':
-                content.innerHTML = `
-                    <h2>About</h2>
-                    <p>Ini adalah halaman About. Tambahkan informasi tentang proyek atau diri Anda di sini.</p>
-                `;
-                break;
-            case 'contact':
-                content.innerHTML = `
-                    <h2>Contact</h2>
-                    <p>Ini adalah halaman Contact. Tambahkan formulir kontak atau info lainnya di sini.</p>
-                `;
-                break;
-            default:
-                content.innerHTML = `<h2>Home</h2><p>Halaman tidak ditemukan.</p>`;
-        }
-    }
-</script>
+
 
 </body>
 </html>
