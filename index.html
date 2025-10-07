@@ -5,104 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Turnamen PES21 SMR RT 02 RW 017</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      height: 100%; width: 100%;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: #f4f6f8;
-      overflow: hidden;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100vw;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin:0; padding:0; }
+    .container { padding: 10px; }
     .navbar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(90deg, #0078D7, #0094FF);
-      padding: 10px;
-      gap: 12px;
-      flex-wrap: wrap;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
+      display: flex; justify-content: center; align-items: center;
+      gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
     }
     .navbar button {
-      background: white;
-      color: #0078D7;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s ease;
+      padding: 8px 16px; border-radius: 20px;
+      border: none; cursor: pointer;
+      font-weight: bold; background: #0078D7; color: white;
+      transition: 0.2s;
     }
-    .navbar button:hover {
-      background: #e6f0ff;
-      transform: translateY(-2px);
-    }
-    .navbar button.active {
-      background: #005BBB;
-      color: white;
-      transform: scale(1.05);
-    }
-    .sheet-area {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: white;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    @media (max-width: 768px) {
-      .navbar { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-      .navbar button { font-size: 13px; padding: 8px 14px; }
-    }
+    .navbar button:hover { background: #005BBB; }
+    .navbar button.active { background: #005BBB; transform: scale(1.05);}
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background: #0078D7; color: white; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="navbar">
-      <button class="active" onclick="loadSheet(1781803540, this)">DASHBOARD</button>
-      <button onclick="loadSheet(1364893889, this)">JADWAL</button>
-      <button onclick="loadSheet(1306868232, this)">BAGAN</button>
-      <button onclick="loadSheet(1460671336, this)">PERATURAN</button>
+      <button class="active" onclick="changeSheet('DASHBOARD', this)">DASHBOARD</button>
+      <button onclick="changeSheet('JADWAL', this)">JADWAL</button>
+      <button onclick="changeSheet('BAGAN', this)">BAGAN</button>
+      <button onclick="changeSheet('PERATURAN', this)">PERATURAN</button>
     </div>
 
-    <div class="sheet-area">
-      <iframe 
-        id="sheetFrame" 
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml?gid=1781803540&single=true&widget=true&headers=false"
-        allowfullscreen>
-      </iframe>
-    </div>
+    <table id="sheetTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script>
-    const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhwyeQX0Z6ziiD43n4-6kiQ5jtD_gp7-rRNM74BWXrnsydR5fqVe6-MgcI_wODiXsroj6T92uVuJ5J/pubhtml";
-    let currentGid = 1781803540;
+    const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM"; // ganti dengan spreadsheet kamu
+    let currentSheet = "DASHBOARD";
 
-    function loadSheet(gid, el) {
-      currentGid = gid;
-      const frame = document.getElementById("sheetFrame");
-      frame.src = `${base}?gid=${gid}&single=true&widget=true&headers=false`;
-      document.querySelectorAll('.navbar button').forEach(btn => btn.classList.remove('active'));
-      el.classList.add('active');
+    async function fetchSheet(sheetName) {
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+        const res = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substring(47, text.length - 2)); // parsing gviz JSON
+        const cols = json.table.cols.map(c => c.label);
+        const rows = json.table.rows.map(r => r.c.map(cell => cell ? cell.v : ''));
+
+        // update header
+        const thead = document.querySelector("#sheetTable thead");
+        thead.innerHTML = `<tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr>`;
+
+        // update body
+        const tbody = document.querySelector("#sheetTable tbody");
+        tbody.innerHTML = rows.map(r => `<tr>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+      } catch (err) {
+        console.error("Error fetch sheet:", err);
+      }
     }
 
-    // 🔄 Auto-refresh iframe setiap 1 detik
-    setInterval(() => {
-      const frame = document.getElementById("sheetFrame");
-      const src = `${base}?gid=${currentGid}&single=true&widget=true&headers=false&t=${Date.now()}`;
-      frame.src = src;
-    }, 1000); // 1 detik
+    function changeSheet(sheetName, el) {
+      currentSheet = sheetName;
+      document.querySelectorAll('.navbar button').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+      fetchSheet(sheetName);
+    }
+
+    // refresh otomatis tiap 1 detik
+    setInterval(() => fetchSheet(currentSheet), 1000);
+
+    // fetch sheet awal
+    fetchSheet(currentSheet);
   </script>
 </body>
 </html>
