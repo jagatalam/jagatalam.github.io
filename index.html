@@ -139,12 +139,21 @@ td.score {
 
 <!-- Tombol Navigasi -->
 <div class="nav-buttons">
-    <button class="active" onclick="goPage('dashboard', this)">Dashboard</button>
-    <button onclick="goPage('jadwal', this)">Jadwal</button>
-    <button onclick="goPage('bagan', this)">Bagan</button>
-    <button onclick="goPage('peraturan', this)">Peraturan</button>
+    <button onclick="goPage('https://jagatalam.github.io/repo/dashboard.html', this)">Dashboard</button>
+    <button onclick="goPage('https://jagatalam.github.io/repo/jadwal.html', this)">Jadwal</button>
+    <button onclick="goPage('https://jagatalam.github.io/repo/bagan.html', this)">Bagan</button>
+    <button onclick="goPage('https://jagatalam.github.io/repo/peraturan.html', this)">Peraturan</button>
 </div>
+<script>
+function goPage(url, btn){
+    // Buka halaman di tab baru
+    window.open(url, '_blank');
 
+    // Set tombol aktif
+    document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+</script>
 <div class="dashboard">
     <!-- Tabel Grup -->
     <div class="panel">
