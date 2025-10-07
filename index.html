@@ -27,9 +27,13 @@ td.score { font-weight:bold; color:#005BBB; }
     <h3>Skor Pertandingan</h3>
     <div class="options">
       <div>
-       
-      </div
-    <div>
+        <label>Putaran: </label>
+        <select id="putaranSelect" onchange="updateMatchTable()">
+          <option value="1">Putaran 1</option>
+          <option value="2">Putaran 2</option>
+        </select>
+      </div>
+      <div>
         <label>Match: </label>
         <select id="matchSelect" onchange="updateMatchTable()">
           <option value="1">Match 1</option>
