@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Turnamen Live</title>
+<title>Dashboard Live Turnamen PES21</title>
 <style>
 body { font-family: "Segoe UI", Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
 h2 { text-align:center; color:#0078D7; margin-top:20px; }
@@ -19,7 +19,7 @@ td.score { font-weight:bold; color:#005BBB; }
 </head>
 <body>
 
-<h2>Dashboard Turnamen PES21</h2>
+<h2>Dashboard Live Turnamen PES21</h2>
 
 <div class="dashboard">
   <!-- Skor Pertandingan -->
@@ -28,14 +28,14 @@ td.score { font-weight:bold; color:#005BBB; }
     <div class="options">
       <div>
         <label>Putaran: </label>
-        <select id="putaranSelect" onchange="loadDashboardData()">
+        <select id="putaranSelect" onchange="loadMatchData()">
           <option value="1">Putaran 1</option>
           <option value="2">Putaran 2</option>
         </select>
       </div>
       <div>
         <label>Match: </label>
-        <select id="matchSelect" onchange="loadDashboardData()">
+        <select id="matchSelect" onchange="loadMatchData()">
           <option value="1">Match 1</option>
           <option value="2">Match 2</option>
           <option value="3">Match 3</option>
@@ -68,7 +68,7 @@ td.score { font-weight:bold; color:#005BBB; }
     <h3>Grup</h3>
     <div class="options">
       <label>Grup: </label>
-      <select id="grupSelect" onchange="loadDashboardData()">
+      <select id="grupSelect" onchange="loadGrupData()">
         <option value="A">Grup A</option>
         <option value="B">Grup B</option>
         <option value="C">Grup C</option>
@@ -83,9 +83,10 @@ td.score { font-weight:bold; color:#005BBB; }
 </div>
 
 <script>
+// Ganti dengan Google Sheet ID-mu
 const SHEET_ID = "1JKYqNcNHdeDO2hiQTu0bXv6-sUwR4hVWr1_qxFXPSzM";
 
-// Fungsi fetch sheet
+// Fungsi fetch data Google Sheet
 async function fetchSheet(sheetName){
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
   const res = await fetch(url);
@@ -95,30 +96,31 @@ async function fetchSheet(sheetName){
   return rows;
 }
 
-// Load dashboard dari 1 sheet
-async function loadDashboardData(){
+// Load data match
+async function loadMatchData(){
   const putaran = document.getElementById("putaranSelect").value;
   const match = document.getElementById("matchSelect").value;
-  const grup = document.getElementById("grupSelect").value;
-
-  const rows = await fetchSheet("Dashboard"); // sheet gabungan
-
-  // Ambil data Skor Pertandingan
-  const matchRows = rows.filter(r=>r[0]==`Putaran ${putaran}` && r[1]==`Match ${match}`);
-  const matchTable = document.querySelector("#matchTable tbody");
-  matchTable.innerHTML = matchRows.map(r=>`<tr><td>${r[2]}</td><td class="score">${r[3]}</td><td class="score">${r[4]}</td><td>${r[5]}</td></tr>`).join('');
-
-  // Ambil data Grup
-  const grupRows = rows.filter(r=>r[7]==`Grup ${grup}`);
-  const grupTable = document.getElementById("grupTable");
-  if(grupRows.length>0){
-    grupTable.querySelector("thead").innerHTML = `<tr>${grupRows[0].slice(7,14).map(h=>`<th>${h}</th>`).join('')}</tr>`;
-    grupTable.querySelector("tbody").innerHTML = grupRows.map(r=>`<tr>${r.slice(7,14).map((c,i)=>i>5?`<td class="score">${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('');
-  }
+  const sheetName = `Skor_Putaran${putaran}`; // pastikan sheet sesuai format ini
+  const rows = await fetchSheet(sheetName);
+  // Filter match
+  const data = rows.filter(r=>r[0]==`Match ${match}`);
+  const tbody = document.querySelector("#matchTable tbody");
+  tbody.innerHTML = data.map(r=>`<tr><td>${r[1]}</td><td class="score">${r[2]}</td><td class="score">${r[3]}</td><td>${r[4]}</td></tr>`).join('');
 }
 
-// Init
-loadDashboardData();
+// Load data grup
+async function loadGrupData(){
+  const grup = document.getElementById("grupSelect").value;
+  const sheetName = `Grup_${grup}`;
+  const rows = await fetchSheet(sheetName);
+  const table = document.getElementById("grupTable");
+  table.querySelector("thead").innerHTML = `<tr>${rows[0].map(h=>`<th>${h}</th>`).join('')}</tr>`;
+  table.querySelector("tbody").innerHTML = rows.slice(1).map(r=>`<tr>${r.map((c,i)=>i>5?`<td class="score">${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('');
+}
+
+// Init tabel saat load halaman
+loadMatchData();
+loadGrupData();
 </script>
 
 </body>
