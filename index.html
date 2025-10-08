@@ -21,9 +21,9 @@ body {
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* posisi roda ke atas */
+  align-items: flex-start;
   position: relative;
-  padding-top: 60px; /* jarak dari atas */
+  padding-top: 60px;
 }
 
 /* Container roda */
@@ -235,10 +235,18 @@ document.getElementById("spinButton").addEventListener("click", () => {
 
   const randomIndex = Math.floor(Math.random() * teams.length);
   const segmentAngle = 360 / teams.length;
-  const stopAngle = 360 * 5 + (90 - randomIndex * segmentAngle); // pointer kanan (90°)
+
+  // Tambahkan sedikit perlambatan terakhir
+  const stopAngle = 360 * 5 + (90 - randomIndex * segmentAngle) + (Math.random() * 10 - 5);
 
   rotation += stopAngle;
+  wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)";
   wheel.style.transform = `rotate(${rotation}deg)`;
+
+  // Hentikan sejenak sebelum popup
+  setTimeout(() => {
+    wheel.style.transition = "transform 0.4s ease-out";
+  }, 5500);
 
   setTimeout(() => {
     const normalizedRotation = (rotation % 360 + 360) % 360;
@@ -251,7 +259,7 @@ document.getElementById("spinButton").addEventListener("click", () => {
     teams.splice(index, 1);
     drawWheel();
     spinning = false;
-  }, 6000);
+  }, 6200); // sedikit delay agar terasa berhenti <1 detik
 });
 
 // ================== POPUP ===================
