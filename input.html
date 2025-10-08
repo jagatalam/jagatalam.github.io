@@ -30,19 +30,22 @@ button {
   font-weight: bold;
   border-radius: 10px;
   border: none;
-  background: #ffdd00;
-  color: #000;
   cursor: pointer;
 }
-button:hover {
-  transform: scale(1.05);
-}
+#saveTeams { background: #ffdd00; color: #000; }
+#saveTeams:hover { transform: scale(1.05); }
+#resetAll { background: #ff4444; color: #fff; margin-left: 10px; }
+#resetAll:hover { transform: scale(1.05); }
+.button-container { display: flex; gap: 10px; }
 </style>
 </head>
 <body>
 <h2>Masukkan Nama Tim (Satu Per Baris)</h2>
 <textarea id="teamList" placeholder="Team A&#10;Team B&#10;Team C"></textarea>
-<button id="saveTeams">Simpan Tim</button>
+<div class="button-container">
+  <button id="saveTeams">Simpan Tim</button>
+  <button id="resetAll">Reset Semua Wheel & Grup</button>
+</div>
 
 <script>
 document.getElementById("saveTeams").addEventListener("click", () => {
@@ -57,6 +60,23 @@ document.getElementById("saveTeams").addEventListener("click", () => {
   }
   localStorage.setItem("wheelTeams", JSON.stringify(teams));
   alert("Tim berhasil disimpan! Sekarang buka index.html untuk memutar wheel.");
+});
+
+// Tombol Reset Semua Wheel + Grup
+document.getElementById("resetAll").addEventListener("click", () => {
+  if (!confirm("Yakin ingin mereset semua tim dan grup?")) return;
+
+  // Hapus semua tim wheel
+  localStorage.removeItem("wheelTeams");
+
+  // Hapus semua grup
+  const groups = ["A","B","C","D"];
+  groups.forEach(g => localStorage.removeItem(`group${g}`));
+
+  // Kosongkan textarea
+  document.getElementById("teamList").value = "";
+
+  alert("Semua tim dan grup telah di-reset. Buka index.html untuk wheel kosong.");
 });
 </script>
 </body>
