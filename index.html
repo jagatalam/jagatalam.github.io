@@ -27,35 +27,48 @@ body {
 
 /* Roda */
 #wheel {
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
   border-radius: 50%;
   border: 8px solid #fff;
-  overflow: hidden;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
   transition: transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-/* Tombol spin di tengah roda */
+/* Tombol spin */
 #spinButton {
   position: absolute;
   top: 50%;
-  left: 25%; /* tetap di tengah roda kiri */
+  left: 25%;
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, #ffdd00, #ff9900);
   color: #000;
   font-weight: bold;
   border: none;
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   font-size: 18px;
   cursor: pointer;
   z-index: 10;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
   transition: 0.3s;
 }
-#spinButton:hover { transform: translate(-50%, -50%) scale(1.05); }
+#spinButton:hover { transform: translate(-50%, -50%) scale(1.1); }
+
+/* Penunjuk anak panah */
+.pointer {
+  position: absolute;
+  top: calc(50% - 225px);
+  left: 25%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 30px solid yellow;
+  z-index: 11;
+}
 
 /* === AREA KANAN (HASIL UNDIAN) === */
 .right-section {
@@ -78,9 +91,10 @@ body {
   box-shadow: 0 0 40px rgba(255,255,255,0.5);
   display: none;
   text-align: center;
+  transition: 0.5s ease;
 }
 
-/* Overlay grup di bawah */
+/* Overlay grup */
 .overlay-container {
   position: fixed;
   bottom: 0;
@@ -110,7 +124,6 @@ body {
 .group table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
 }
 .group td {
   border: 1px solid #000;
@@ -128,7 +141,8 @@ body {
 
 <!-- BAGIAN KIRI: RODA -->
 <div class="left-section">
-  <canvas id="wheel" width="400" height="400"></canvas>
+  <div class="pointer"></div>
+  <canvas id="wheel" width="450" height="450"></canvas>
   <button id="spinButton">SPIN</button>
 </div>
 
@@ -141,9 +155,23 @@ body {
 <div class="overlay-container" id="overlayContainer"></div>
 
 <script>
-const teams = ["Team A", "Team B", "Team C", "Team D", "Team E", "Team F", "Team G", "Team H"];
+let teams = [
+  "Team A","Team B","Team C","Team D","Team E","Team F","Team G","Team H",
+  "Team I","Team J","Team K","Team L","Team M","Team N","Team O","Team P"
+];
 const groups = ["A", "B", "C", "D"];
 let currentGroupIndex = 0;
+const wheel = document.getElementById("wheel");
+const ctx = wheel.getContext("2d");
+let rotation = 0;
+let spinning = false;
+
+// Warna sektor
+const colors = [
+  "#f94144","#f3722c","#f8961e","#f9844a","#f9c74f",
+  "#90be6d","#43aa8b","#577590","#277da1","#4cc9f0",
+  "#b5179e","#7209b7","#480ca8","#3f37c9","#4361ee","#4895ef"
+];
 
 // ================== RENDER GRUP ===================
 function getTeams(group) {
@@ -168,45 +196,41 @@ function renderGroups() {
 renderGroups();
 
 // ================== RODA ===================
-const wheel = document.getElementById("wheel");
-const ctx = wheel.getContext("2d");
-const segmentAngle = (2 * Math.PI) / teams.length;
-const colors = ["#f94144", "#f3722c", "#f9c74f", "#90be6d", "#43aa8b", "#577590", "#277da1", "#f9844a"];
-
-// Gambar roda
 function drawWheel() {
+  ctx.clearRect(0, 0, 450, 450);
+  const segmentAngle = (2 * Math.PI) / teams.length;
+
   for (let i = 0; i < teams.length; i++) {
     const start = i * segmentAngle;
     ctx.beginPath();
-    ctx.moveTo(200, 200);
-    ctx.arc(200, 200, 200, start, start + segmentAngle);
+    ctx.moveTo(225, 225);
+    ctx.arc(225, 225, 225, start, start + segmentAngle);
     ctx.fillStyle = colors[i % colors.length];
     ctx.fill();
+
+    // Teks nama tim
     ctx.save();
-    ctx.translate(200, 200);
+    ctx.translate(225, 225);
     ctx.rotate(start + segmentAngle / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "#fff";
-    ctx.font = "bold 16px Segoe UI";
-    ctx.fillText(teams[i], 180, 10);
+    ctx.font = "bold 15px Segoe UI";
+    ctx.fillText(teams[i], 210, 5);
     ctx.restore();
   }
 }
 drawWheel();
 
-// ================== SPIN LOGIC ===================
-let spinning = false;
-let rotation = 0;
-
+// ================== SPIN ===================
 document.getElementById("spinButton").addEventListener("click", () => {
   if (spinning || teams.length === 0) return;
   spinning = true;
 
   const randomIndex = Math.floor(Math.random() * teams.length);
-  const degreesPerSegment = 360 / teams.length;
-  const stopAngle = 360 * 5 + (randomIndex * degreesPerSegment) + degreesPerSegment / 2;
-  rotation += stopAngle;
+  const segmentAngle = 360 / teams.length;
+  const stopAngle = 360 * 5 + (randomIndex * segmentAngle) + segmentAngle / 2;
 
+  rotation += stopAngle;
   wheel.style.transform = `rotate(${rotation}deg)`;
 
   setTimeout(() => {
@@ -215,15 +239,10 @@ document.getElementById("spinButton").addEventListener("click", () => {
     addTeamToGroup(selectedTeam);
 
     teams.splice(randomIndex, 1);
-    redrawWheel();
+    drawWheel();
     spinning = false;
   }, 6000);
 });
-
-function redrawWheel() {
-  ctx.clearRect(0, 0, 400, 400);
-  drawWheel();
-}
 
 // ================== POPUP ===================
 function showPopup(team) {
@@ -236,7 +255,7 @@ function showPopup(team) {
   setTimeout(() => { popup.style.display = "none"; }, 5000);
 }
 
-// ================== MASUKKAN KE GRUP ===================
+// ================== KELOMPOK ===================
 function addTeamToGroup(team) {
   const group = groups[currentGroupIndex];
   let t = getTeams(group);
