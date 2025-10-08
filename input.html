@@ -42,10 +42,10 @@ label {
     display: inline-block;
     width: 60px;
 }
-select {
+input.searchable {
     width: 140px;
     margin-right: 8px;
-    padding: 4px;
+    padding: 5px;
     border-radius: 5px;
     border: none;
 }
@@ -89,6 +89,24 @@ textarea {
     resize: none;
     font-size: 14px;
 }
+.suggestion-box {
+    position: absolute;
+    background: rgba(255,255,255,0.95);
+    color: #000;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    z-index: 100;
+    max-height: 120px;
+    overflow-y: auto;
+    display: none;
+}
+.suggestion-item {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.suggestion-item:hover {
+    background: #eee;
+}
 </style>
 </head>
 <body>
@@ -102,77 +120,106 @@ textarea {
 <div class="right-panel">
     <h2>Daftar Nama Tim (Sumber Dropdown)</h2>
     <textarea id="teamList" placeholder="Masukkan nama tim, satu per baris..."></textarea>
-    <button style="margin-top:10px;" onclick="updateDropdowns()">🔁 Perbarui Dropdown</button>
+    <button style="margin-top:10px;" onclick="updateTeamList()">💾 Simpan & Perbarui</button>
 </div>
 
 <script>
 const groups = ['A','B','C','D'];
 
-// Buat form input per grup
+// Membuat form per grup
 function createForm() {
     const container = document.getElementById("formContainer");
-    container.innerHTML = ""; // reset isi dulu
+    container.innerHTML = "";
     groups.forEach(gr => {
         let formHTML = `<div class="group-input"><h3>GRUP ${gr}</h3>`;
         for (let i = 1; i <= 4; i++) {
             formHTML += `
-                <div style="margin:5px 0;">
+                <div style="margin:5px 0; position:relative;">
                     <label>Tim ${i}</label>
-                    <select id="group${gr}_team${i}"></select>
+                    <input type="text" class="searchable" id="group${gr}_team${i}" placeholder="Ketik nama tim...">
+                    <div class="suggestion-box" id="suggest_${gr}_${i}"></div>
                     <button onclick="saveTeam('${gr}', ${i})">Input</button>
                 </div>`;
         }
         formHTML += `</div>`;
         container.innerHTML += formHTML;
     });
-    updateDropdowns(); // isi dropdown awal
+    attachSearchEvents();
 }
 
-// Isi dropdown dari textarea daftar tim
-function updateDropdowns() {
-    const list = document.getElementById("teamList").value
+// Simpan daftar tim di textarea ke localStorage
+function updateTeamList() {
+    const teamList = document.getElementById("teamList").value
         .split("\n")
         .map(t => t.trim())
         .filter(t => t !== "");
+    localStorage.setItem("allTeams", JSON.stringify(teamList));
+    alert("Daftar tim diperbarui!");
+}
 
-    groups.forEach(gr => {
-        for (let i = 1; i <= 4; i++) {
-            const select = document.getElementById(`group${gr}_team${i}`);
-            select.innerHTML = "";
-            list.forEach(team => {
-                const opt = document.createElement("option");
-                opt.value = opt.textContent = team;
-                select.appendChild(opt);
+// Fungsi untuk membuat saran dropdown saat diketik
+function attachSearchEvents() {
+    document.querySelectorAll(".searchable").forEach(input => {
+        input.addEventListener("input", function() {
+            const val = this.value.toLowerCase();
+            const suggestBox = this.parentElement.querySelector(".suggestion-box");
+            const allTeams = JSON.parse(localStorage.getItem("allTeams")) || [];
+            suggestBox.innerHTML = "";
+            const matches = allTeams.filter(team => team.toLowerCase().includes(val));
+            if (val === "" || matches.length === 0) {
+                suggestBox.style.display = "none";
+                return;
+            }
+            matches.forEach(team => {
+                const item = document.createElement("div");
+                item.classList.add("suggestion-item");
+                item.textContent = team;
+                item.onclick = () => {
+                    this.value = team;
+                    suggestBox.style.display = "none";
+                };
+                suggestBox.appendChild(item);
             });
-            // kalau sudah tersimpan sebelumnya, pilih yang sesuai
-            const saved = JSON.parse(localStorage.getItem(`group${gr}`)) || [];
-            if (saved[i - 1]) select.value = saved[i - 1];
-        }
+            suggestBox.style.display = "block";
+        });
+
+        input.addEventListener("blur", function() {
+            setTimeout(() => {
+                const suggestBox = this.parentElement.querySelector(".suggestion-box");
+                suggestBox.style.display = "none";
+            }, 150);
+        });
     });
 }
 
-// Simpan nama tim ke localStorage
+// Simpan ke localStorage sesuai grup
 function saveTeam(group, index) {
-    const selectId = `group${group}_team${index}`;
-    const selectedTeam = document.getElementById(selectId).value;
-    if (!selectedTeam) return alert("Pilih nama tim terlebih dahulu!");
+    const input = document.getElementById(`group${group}_team${index}`);
+    const val = input.value.trim();
+    if (val === "") return alert("Nama tim belum diisi!");
 
-    let teams = JSON.parse(localStorage.getItem(`group${group}`)) || ["TIM 1","TIM 2","TIM 3","TIM 4"];
-    teams[index - 1] = selectedTeam;
+    let teams = JSON.parse(localStorage.getItem(`group${group}`)) || ["", "", "", ""];
+    teams[index - 1] = val;
     localStorage.setItem(`group${group}`, JSON.stringify(teams));
-    alert(`Tim ${index} pada Grup ${group} telah disimpan!`);
+    alert(`Tim ${index} Grup ${group} telah disimpan!`);
 }
 
-// Reset semua grup
+// Reset semua data
 function resetAll() {
-    if (confirm("Yakin ingin mereset semua data grup?")) {
+    if (confirm("Yakin ingin reset semua data grup dan tim?")) {
         groups.forEach(gr => localStorage.removeItem(`group${gr}`));
-        alert("Semua data grup telah dihapus!");
+        localStorage.removeItem("allTeams");
+        document.getElementById("teamList").value = "";
         createForm();
     }
 }
 
-createForm();
+// Saat pertama kali dibuka, tampilkan form dan isi textarea dari localStorage
+window.onload = function() {
+    createForm();
+    const saved = JSON.parse(localStorage.getItem("allTeams")) || [];
+    document.getElementById("teamList").value = saved.join("\n");
+};
 </script>
 
 </body>
