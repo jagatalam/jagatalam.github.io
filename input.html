@@ -10,33 +10,49 @@ body {
     background: #0b1a39;
     color: white;
     padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
 }
 h2 { 
     text-align: center; 
     color: #FFD700; 
+    width: 100%;
+}
+.left-panel {
+    flex: 2;
+}
+.right-panel {
+    flex: 1;
 }
 .group-input {
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 10px;
-    margin: 20px 0;
-    padding: 15px;
+    margin: 10px 0;
+    padding: 10px;
+    width: 250px;
+}
+.group-input h3 {
+    margin-top: 0;
+    color: #FFD700;
+    text-align: center;
 }
 label {
     display: inline-block;
-    width: 70px;
+    width: 60px;
 }
-input, select {
-    width: 160px;
-    margin-right: 10px;
-    padding: 5px;
+select {
+    width: 140px;
+    margin-right: 8px;
+    padding: 4px;
     border-radius: 5px;
     border: none;
 }
 button {
     background: #FFD700;
     border: none;
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
@@ -60,16 +76,34 @@ button:hover {
 #resetAll:hover {
     background: #c9302c;
 }
+
+/* Kotak teks besar di kanan */
+textarea {
+    width: 100%;
+    height: 400px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 10px;
+    resize: none;
+    font-size: 14px;
+}
 </style>
 </head>
 <body>
 
-<h2>Input Nama Tim per Grup</h2>
+<div class="left-panel">
+    <h2>Input Nama Tim per Grup</h2>
+    <div id="formContainer"></div>
+    <button id="resetAll" onclick="resetAll()">🔄 Reset Semua Grup</button>
+</div>
 
-<div id="formContainer"></div>
-
-<!-- Tombol Reset Semua Grup -->
-<button id="resetAll" onclick="resetAll()">🔄 Reset Semua Grup</button>
+<div class="right-panel">
+    <h2>Daftar Nama Tim (Sumber Dropdown)</h2>
+    <textarea id="teamList" placeholder="Masukkan nama tim, satu per baris..."></textarea>
+    <button style="margin-top:10px;" onclick="updateDropdowns()">🔁 Perbarui Dropdown</button>
+</div>
 
 <script>
 const groups = ['A','B','C','D'];
@@ -82,35 +116,59 @@ function createForm() {
         let formHTML = `<div class="group-input"><h3>GRUP ${gr}</h3>`;
         for (let i = 1; i <= 4; i++) {
             formHTML += `
-                <div>
+                <div style="margin:5px 0;">
                     <label>Tim ${i}</label>
-                    <input type="text" id="group${gr}_team${i}" placeholder="Nama Tim ${i}">
+                    <select id="group${gr}_team${i}"></select>
                     <button onclick="saveTeam('${gr}', ${i})">Input</button>
                 </div>`;
         }
         formHTML += `</div>`;
         container.innerHTML += formHTML;
     });
+    updateDropdowns(); // isi dropdown awal
+}
+
+// Isi dropdown dari textarea daftar tim
+function updateDropdowns() {
+    const list = document.getElementById("teamList").value
+        .split("\n")
+        .map(t => t.trim())
+        .filter(t => t !== "");
+
+    groups.forEach(gr => {
+        for (let i = 1; i <= 4; i++) {
+            const select = document.getElementById(`group${gr}_team${i}`);
+            select.innerHTML = "";
+            list.forEach(team => {
+                const opt = document.createElement("option");
+                opt.value = opt.textContent = team;
+                select.appendChild(opt);
+            });
+            // kalau sudah tersimpan sebelumnya, pilih yang sesuai
+            const saved = JSON.parse(localStorage.getItem(`group${gr}`)) || [];
+            if (saved[i - 1]) select.value = saved[i - 1];
+        }
+    });
 }
 
 // Simpan nama tim ke localStorage
 function saveTeam(group, index) {
-    const inputId = `group${group}_team${index}`;
-    const newName = document.getElementById(inputId).value.trim();
-    if (newName === "") return alert("Nama tim tidak boleh kosong!");
+    const selectId = `group${group}_team${index}`;
+    const selectedTeam = document.getElementById(selectId).value;
+    if (!selectedTeam) return alert("Pilih nama tim terlebih dahulu!");
 
     let teams = JSON.parse(localStorage.getItem(`group${group}`)) || ["TIM 1","TIM 2","TIM 3","TIM 4"];
-    teams[index - 1] = newName;
+    teams[index - 1] = selectedTeam;
     localStorage.setItem(`group${group}`, JSON.stringify(teams));
-    alert(`Tim ${index} pada Grup ${group} telah diupdate!`);
+    alert(`Tim ${index} pada Grup ${group} telah disimpan!`);
 }
 
-// Hapus semua data grup dari localStorage
+// Reset semua grup
 function resetAll() {
-    if (confirm("Yakin ingin menghapus semua nama tim di semua grup?")) {
+    if (confirm("Yakin ingin mereset semua data grup?")) {
         groups.forEach(gr => localStorage.removeItem(`group${gr}`));
-        alert("Semua grup telah direset ke default!");
-        createForm(); // refresh form
+        alert("Semua data grup telah dihapus!");
+        createForm();
     }
 }
 
