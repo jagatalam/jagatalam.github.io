@@ -11,7 +11,10 @@ body {
     color: white;
     padding: 30px;
 }
-h2 { text-align: center; color: #FFD700; }
+h2 { 
+    text-align: center; 
+    color: #FFD700; 
+}
 .group-input {
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
@@ -23,10 +26,12 @@ label {
     display: inline-block;
     width: 70px;
 }
-input {
-    width: 150px;
+input, select {
+    width: 160px;
     margin-right: 10px;
     padding: 5px;
+    border-radius: 5px;
+    border: none;
 }
 button {
     background: #FFD700;
@@ -34,9 +39,26 @@ button {
     padding: 6px 10px;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
 }
 button:hover {
     background: #FFC300;
+}
+
+/* Tombol reset global */
+#resetAll {
+    display: block;
+    margin: 25px auto;
+    padding: 10px 20px;
+    background: #d9534f;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+#resetAll:hover {
+    background: #c9302c;
 }
 </style>
 </head>
@@ -46,12 +68,16 @@ button:hover {
 
 <div id="formContainer"></div>
 
+<!-- Tombol Reset Semua Grup -->
+<button id="resetAll" onclick="resetAll()">🔄 Reset Semua Grup</button>
+
 <script>
 const groups = ['A','B','C','D'];
 
 // Buat form input per grup
 function createForm() {
     const container = document.getElementById("formContainer");
+    container.innerHTML = ""; // reset isi dulu
     groups.forEach(gr => {
         let formHTML = `<div class="group-input"><h3>GRUP ${gr}</h3>`;
         for (let i = 1; i <= 4; i++) {
@@ -67,6 +93,7 @@ function createForm() {
     });
 }
 
+// Simpan nama tim ke localStorage
 function saveTeam(group, index) {
     const inputId = `group${group}_team${index}`;
     const newName = document.getElementById(inputId).value.trim();
@@ -76,6 +103,15 @@ function saveTeam(group, index) {
     teams[index - 1] = newName;
     localStorage.setItem(`group${group}`, JSON.stringify(teams));
     alert(`Tim ${index} pada Grup ${group} telah diupdate!`);
+}
+
+// Hapus semua data grup dari localStorage
+function resetAll() {
+    if (confirm("Yakin ingin menghapus semua nama tim di semua grup?")) {
+        groups.forEach(gr => localStorage.removeItem(`group${gr}`));
+        alert("Semua grup telah direset ke default!");
+        createForm(); // refresh form
+    }
 }
 
 createForm();
