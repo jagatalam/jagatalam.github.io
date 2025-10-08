@@ -43,12 +43,12 @@ body {
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-/* Pointer di sisi kanan dan diputar 180° */
+/* Pointer di sisi kanan */
 .pointer {
   position: absolute;
   top: 50%;
   right: -25px;
-  transform: translateY(-50%) rotate(180deg);
+  transform: translateY(-50%);
   width: 0;
   height: 0;
   border-top: 15px solid transparent;
@@ -76,7 +76,9 @@ body {
   box-shadow: 0 0 20px rgba(0,0,0,0.6);
   transition: 0.3s;
 }
-#spinButton:hover { transform: translate(-50%, -50%) scale(1.1); }
+#spinButton:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
 
 /* === AREA KANAN (HASIL UNDIAN) === */
 .right-section {
@@ -168,6 +170,7 @@ let teams = [
   "Team A","Team B","Team C","Team D","Team E","Team F","Team G","Team H",
   "Team I","Team J","Team K","Team L","Team M","Team N","Team O","Team P"
 ];
+
 const groups = ["A", "B", "C", "D"];
 let currentGroupIndex = 0;
 const wheel = document.getElementById("wheel");
@@ -236,30 +239,25 @@ document.getElementById("spinButton").addEventListener("click", () => {
   const randomIndex = Math.floor(Math.random() * teams.length);
   const segmentAngle = 360 / teams.length;
 
-  // Tambahkan sedikit perlambatan terakhir
-  const stopAngle = 360 * 5 + (90 - randomIndex * segmentAngle) + (Math.random() * 10 - 5);
-
+  // total rotasi (arah jarum jam)
+  const stopAngle = 360 * 5 + (randomIndex * segmentAngle) + (Math.random() * 10 - 5);
   rotation += stopAngle;
   wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)";
   wheel.style.transform = `rotate(${rotation}deg)`;
 
-  // Hentikan sejenak sebelum popup
   setTimeout(() => {
-    wheel.style.transition = "transform 0.4s ease-out";
-  }, 5500);
-
-  setTimeout(() => {
-    const normalizedRotation = (rotation % 360 + 360) % 360;
-    const index = Math.floor(((90 - normalizedRotation + 360) % 360) / segmentAngle);
-    const selectedTeam = teams[index] || teams[0];
+    const normalized = (rotation % 360 + 360) % 360;
+    // 0 derajat di kanan → pointer kanan
+    const index = Math.floor((normalized / segmentAngle)) % teams.length;
+    const selectedTeam = teams[teams.length - 1 - index] || teams[0];
 
     showPopup(selectedTeam);
     addTeamToGroup(selectedTeam);
 
-    teams.splice(index, 1);
+    teams.splice(teams.indexOf(selectedTeam), 1);
     drawWheel();
     spinning = false;
-  }, 6200); // sedikit delay agar terasa berhenti <1 detik
+  }, 6200);
 });
 
 // ================== POPUP ===================
