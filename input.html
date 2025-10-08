@@ -12,39 +12,40 @@ body {
     padding: 30px;
     display: flex;
     justify-content: space-between;
-    gap: 20px;
 }
-h2 { 
-    text-align: center; 
-    color: #FFD700; 
+h2 {
+    text-align: center;
+    color: #FFD700;
+}
+.container {
+    display: flex;
     width: 100%;
 }
-.left-panel {
-    flex: 2;
+.left {
+    width: 65%;
 }
-.right-panel {
-    flex: 1;
+.right {
+    width: 30%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 15px;
+    height: fit-content;
 }
 .group-input {
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 10px;
-    margin: 10px 0;
-    padding: 10px;
-    width: 250px;
-}
-.group-input h3 {
-    margin-top: 0;
-    color: #FFD700;
-    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
 }
 label {
     display: inline-block;
-    width: 60px;
+    width: 70px;
 }
-input.searchable {
-    width: 140px;
-    margin-right: 8px;
+select {
+    width: 160px;
+    margin-right: 10px;
     padding: 5px;
     border-radius: 5px;
     border: none;
@@ -52,7 +53,7 @@ input.searchable {
 button {
     background: #FFD700;
     border: none;
-    padding: 5px 8px;
+    padding: 6px 10px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
@@ -60,8 +61,6 @@ button {
 button:hover {
     background: #FFC300;
 }
-
-/* Tombol reset global */
 #resetAll {
     display: block;
     margin: 25px auto;
@@ -76,150 +75,109 @@ button:hover {
 #resetAll:hover {
     background: #c9302c;
 }
-
-/* Kotak teks besar di kanan */
 textarea {
     width: 100%;
-    height: 400px;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.3);
+    height: 300px;
     border-radius: 10px;
+    border: none;
     padding: 10px;
     resize: none;
     font-size: 14px;
-}
-.suggestion-box {
-    position: absolute;
-    background: rgba(255,255,255,0.95);
-    color: #000;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    z-index: 100;
-    max-height: 120px;
-    overflow-y: auto;
-    display: none;
-}
-.suggestion-item {
-    padding: 5px 10px;
-    cursor: pointer;
-}
-.suggestion-item:hover {
-    background: #eee;
 }
 </style>
 </head>
 <body>
 
-<div class="left-panel">
-    <h2>Input Nama Tim per Grup</h2>
-    <div id="formContainer"></div>
-    <button id="resetAll" onclick="resetAll()">🔄 Reset Semua Grup</button>
-</div>
+<div class="container">
+    <div class="left">
+        <h2>Input Nama Tim per Grup</h2>
+        <div id="formContainer"></div>
+        <button id="resetAll" onclick="resetAll()">🔄 Reset Semua Grup</button>
+    </div>
 
-<div class="right-panel">
-    <h2>Daftar Nama Tim (Sumber Dropdown)</h2>
-    <textarea id="teamList" placeholder="Masukkan nama tim, satu per baris..."></textarea>
-    <button style="margin-top:10px;" onclick="updateTeamList()">💾 Simpan & Perbarui</button>
+    <div class="right">
+        <h3>📋 Daftar Tim</h3>
+        <p style="font-size: 13px; color: #FFD700;">Masukkan daftar nama tim di sini (satu nama per baris):</p>
+        <textarea id="teamList" placeholder="Contoh:
+Tim Alpha
+Tim Bravo
+Tim Charlie
+Tim Delta
+Tim Echo"></textarea>
+    </div>
 </div>
 
 <script>
 const groups = ['A','B','C','D'];
 
-// Membuat form per grup
+// Buat form input per grup
 function createForm() {
     const container = document.getElementById("formContainer");
-    container.innerHTML = "";
+    container.innerHTML = ""; 
     groups.forEach(gr => {
         let formHTML = `<div class="group-input"><h3>GRUP ${gr}</h3>`;
         for (let i = 1; i <= 4; i++) {
             formHTML += `
-                <div style="margin:5px 0; position:relative;">
+                <div>
                     <label>Tim ${i}</label>
-                    <input type="text" class="searchable" id="group${gr}_team${i}" placeholder="Ketik nama tim...">
-                    <div class="suggestion-box" id="suggest_${gr}_${i}"></div>
+                    <select id="group${gr}_team${i}">
+                        <option value="">-- pilih tim --</option>
+                    </select>
                     <button onclick="saveTeam('${gr}', ${i})">Input</button>
                 </div>`;
         }
         formHTML += `</div>`;
         container.innerHTML += formHTML;
     });
-    attachSearchEvents();
+    updateDropdowns();
 }
 
-// Simpan daftar tim di textarea ke localStorage
-function updateTeamList() {
-    const teamList = document.getElementById("teamList").value
-        .split("\n")
-        .map(t => t.trim())
-        .filter(t => t !== "");
-    localStorage.setItem("allTeams", JSON.stringify(teamList));
-    alert("Daftar tim diperbarui!");
-}
-
-// Fungsi untuk membuat saran dropdown saat diketik
-function attachSearchEvents() {
-    document.querySelectorAll(".searchable").forEach(input => {
-        input.addEventListener("input", function() {
-            const val = this.value.toLowerCase();
-            const suggestBox = this.parentElement.querySelector(".suggestion-box");
-            const allTeams = JSON.parse(localStorage.getItem("allTeams")) || [];
-            suggestBox.innerHTML = "";
-            const matches = allTeams.filter(team => team.toLowerCase().includes(val));
-            if (val === "" || matches.length === 0) {
-                suggestBox.style.display = "none";
-                return;
-            }
-            matches.forEach(team => {
-                const item = document.createElement("div");
-                item.classList.add("suggestion-item");
-                item.textContent = team;
-                item.onclick = () => {
-                    this.value = team;
-                    suggestBox.style.display = "none";
-                };
-                suggestBox.appendChild(item);
-            });
-            suggestBox.style.display = "block";
+// Update dropdown berdasarkan textarea
+function updateDropdowns() {
+    const teamText = document.getElementById("teamList").value.trim();
+    const teamArray = teamText.split("\n").map(t => t.trim()).filter(t => t);
+    document.querySelectorAll("select").forEach(sel => {
+        const currentVal = sel.value;
+        sel.innerHTML = `<option value="">-- pilih tim --</option>`;
+        teamArray.forEach(team => {
+            const opt = document.createElement("option");
+            opt.value = team;
+            opt.textContent = team;
+            sel.appendChild(opt);
         });
-
-        input.addEventListener("blur", function() {
-            setTimeout(() => {
-                const suggestBox = this.parentElement.querySelector(".suggestion-box");
-                suggestBox.style.display = "none";
-            }, 150);
-        });
+        sel.value = currentVal;
     });
 }
 
-// Simpan ke localStorage sesuai grup
+// Simpan nama tim ke localStorage
 function saveTeam(group, index) {
-    const input = document.getElementById(`group${group}_team${index}`);
-    const val = input.value.trim();
-    if (val === "") return alert("Nama tim belum diisi!");
+    const selectId = `group${group}_team${index}`;
+    const newName = document.getElementById(selectId).value.trim();
+    if (newName === "") return alert("Silakan pilih nama tim!");
 
-    let teams = JSON.parse(localStorage.getItem(`group${group}`)) || ["", "", "", ""];
-    teams[index - 1] = val;
+    let teams = JSON.parse(localStorage.getItem(`group${group}`)) || ["","","",""];
+    teams[index - 1] = newName;
     localStorage.setItem(`group${group}`, JSON.stringify(teams));
-    alert(`Tim ${index} Grup ${group} telah disimpan!`);
+
+    // Trigger manual agar halaman index.html update realtime
+    window.dispatchEvent(new StorageEvent('storage', { key: `group${group}`, newValue: JSON.stringify(teams) }));
+
+    alert(`✅ Tim ${index} pada Grup ${group} telah diupdate!`);
 }
 
-// Reset semua data
+// Reset semua grup
 function resetAll() {
-    if (confirm("Yakin ingin reset semua data grup dan tim?")) {
+    if (confirm("Yakin ingin menghapus semua nama tim di semua grup?")) {
         groups.forEach(gr => localStorage.removeItem(`group${gr}`));
-        localStorage.removeItem("allTeams");
-        document.getElementById("teamList").value = "";
+        alert("Semua grup telah direset!");
         createForm();
     }
 }
 
-// Saat pertama kali dibuka, tampilkan form dan isi textarea dari localStorage
-window.onload = function() {
-    createForm();
-    const saved = JSON.parse(localStorage.getItem("allTeams")) || [];
-    document.getElementById("teamList").value = saved.join("\n");
-};
+// Tambah event listener untuk update dropdown otomatis
+document.getElementById("teamList").addEventListener("input", updateDropdowns);
+
+createForm();
 </script>
 
 </body>
