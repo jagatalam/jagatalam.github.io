@@ -43,11 +43,11 @@ body {
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-/* Pointer diputar 180 derajat (menghadap ke kiri arah roda) */
+/* Pointer di sisi kanan dan diputar 180° */
 .pointer {
   position: absolute;
   top: 50%;
-  left: -25px; /* pindah ke sisi kiri roda */
+  right: -25px;
   transform: translateY(-50%) rotate(180deg);
   width: 0;
   height: 0;
@@ -235,14 +235,14 @@ document.getElementById("spinButton").addEventListener("click", () => {
 
   const randomIndex = Math.floor(Math.random() * teams.length);
   const segmentAngle = 360 / teams.length;
-  const stopAngle = 360 * 5 + (270 - randomIndex * segmentAngle); // pointer kiri (270°)
+  const stopAngle = 360 * 5 + (90 - randomIndex * segmentAngle); // pointer kanan (90°)
 
   rotation += stopAngle;
   wheel.style.transform = `rotate(${rotation}deg)`;
 
   setTimeout(() => {
     const normalizedRotation = (rotation % 360 + 360) % 360;
-    const index = Math.floor(((270 - normalizedRotation + 360) % 360) / segmentAngle);
+    const index = Math.floor(((90 - normalizedRotation + 360) % 360) / segmentAngle);
     const selectedTeam = teams[index] || teams[0];
 
     showPopup(selectedTeam);
