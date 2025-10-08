@@ -9,13 +9,20 @@ body {
   margin: 0;
   height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   background: radial-gradient(circle at center, #001F54, #000);
   color: white;
   font-family: "Segoe UI", sans-serif;
   overflow: hidden;
+}
+
+/* === AREA RODA (KIRI) === */
+.left-section {
+  width: 50%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 /* Roda */
@@ -24,17 +31,16 @@ body {
   height: 400px;
   border-radius: 50%;
   border: 8px solid #fff;
-  position: relative;
   overflow: hidden;
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
   transition: transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-/* Tombol spin */
+/* Tombol spin di tengah roda */
 #spinButton {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 25%; /* tetap di tengah roda kiri */
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, #ffdd00, #ff9900);
   color: #000;
@@ -51,21 +57,26 @@ body {
 }
 #spinButton:hover { transform: translate(-50%, -50%) scale(1.05); }
 
+/* === AREA KANAN (HASIL UNDIAN) === */
+.right-section {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
 /* Popup hasil */
 #popup {
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.95);
   color: #000;
   padding: 30px 60px;
   border-radius: 20px;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: bold;
   box-shadow: 0 0 40px rgba(255,255,255,0.5);
   display: none;
-  z-index: 20;
   text-align: center;
 }
 
@@ -115,10 +126,18 @@ body {
 </head>
 <body>
 
-<div id="popup"></div>
-<canvas id="wheel" width="400" height="400"></canvas>
-<button id="spinButton">SPIN</button>
+<!-- BAGIAN KIRI: RODA -->
+<div class="left-section">
+  <canvas id="wheel" width="400" height="400"></canvas>
+  <button id="spinButton">SPIN</button>
+</div>
 
+<!-- BAGIAN KANAN: HASIL -->
+<div class="right-section">
+  <div id="popup">🎯 Siap diundi 🎯</div>
+</div>
+
+<!-- OVERLAY GRUP -->
 <div class="overlay-container" id="overlayContainer"></div>
 
 <script>
@@ -211,6 +230,9 @@ function showPopup(team) {
   const popup = document.getElementById("popup");
   popup.textContent = `🎉 ${team} 🎉`;
   popup.style.display = "block";
+  popup.style.opacity = "1";
+  popup.style.transform = "scale(1.1)";
+  setTimeout(() => { popup.style.opacity = "0"; }, 4500);
   setTimeout(() => { popup.style.display = "none"; }, 5000);
 }
 
