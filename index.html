@@ -3,33 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Overlay Drawing Grup</title>
+<title>Wheel of Names - Drawing Grup</title>
 <style>
 body {
     margin: 0;
-    padding: 0;
-    background: transparent;
     font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle, #003399 30%, #001a66 100%);
     color: white;
+    overflow: hidden;
 }
 
-/* Container utama overlay */
+/* Roda utama */
+#wheelCanvas {
+    display: block;
+    margin: 40px auto;
+    background: transparent;
+    border: 8px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
+
+/* Tombol spin di tengah */
+#spinBtn {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffcc00;
+    border: none;
+    color: #003399;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+#spinBtn:hover {
+    background: #ffdb4d;
+}
+
+/* Container grup di bawah */
 .overlay-container {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 25vh;
-    background: rgba(0, 51, 153, 0.85);
+    height: 28vh;
+    background: rgba(0, 51, 153, 0.9);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     padding: 10px 0;
 }
 
-/* Setiap grup */
+/* Kartu grup */
 .group {
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255, 255, 255, 0.95);
     border: 3px solid #003399;
     border-radius: 12px;
     width: 200px;
@@ -38,43 +69,27 @@ body {
     text-align: center;
     color: #000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease-in-out;
 }
-.group:hover {
-    transform: scale(1.03);
-}
-
-/* Judul grup */
 .group h3 {
     margin: 5px 0 10px;
     font-size: 18px;
     color: #003399;
-    letter-spacing: 1px;
     font-weight: bold;
 }
-
-/* Tabel tim */
 .group table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* lebar kolom tetap */
+    table-layout: fixed;
 }
-
-/* Sel tim */
 .group td {
     border: 1px solid #000;
-    padding: 5px 4px;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 5px;
     text-align: center;
-    height: 26px; /* tinggi seragam */
+    font-weight: 600;
+    height: 26px;
+    font-size: 14px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background: rgba(255,255,255,0.85);
 }
-
-/* Warna baris bergantian */
 .group tr:nth-child(odd) td {
     background: rgba(240,240,255,0.95);
 }
@@ -85,41 +100,112 @@ body {
 </head>
 <body>
 
+<canvas id="wheelCanvas" width="500" height="500"></canvas>
+<button id="spinBtn">SPIN</button>
+
 <div class="overlay-container" id="overlayContainer"></div>
 
 <script>
+// ==== DATA TIM ====
+const teams = [
+  "Real Madrid", "Barcelona", "Bayern Munich", "Man City", "Liverpool",
+  "Arsenal", "PSG", "Inter Milan", "Juventus", "AC Milan",
+  "Dortmund", "Chelsea", "Atletico Madrid", "Napoli", "Porto", "Ajax"
+];
+
 const groups = ['A','B','C','D'];
+let groupIndex = 0;
 
-// Ambil data tim dari localStorage
+// ==== DATA GRUP LOCAL STORAGE ====
 function getTeams(group) {
-    return JSON.parse(localStorage.getItem(`group${group}`)) || ["", "", "", ""];
+  return JSON.parse(localStorage.getItem(`group${group}`)) || ["", "", "", ""];
+}
+function saveTeamToGroup(team) {
+  const group = groups[groupIndex];
+  let list = getTeams(group);
+  const emptyIndex = list.findIndex(x => x === "");
+  if (emptyIndex !== -1) {
+    list[emptyIndex] = team;
+    localStorage.setItem(`group${group}`, JSON.stringify(list));
+    renderGroups();
+    groupIndex = (groupIndex + 1) % groups.length; // lanjut ke grup berikutnya
+  }
 }
 
-// Render grup ke overlay
-function renderGroups() {
-    const container = document.getElementById("overlayContainer");
-    container.innerHTML = '';
-    groups.forEach(gr => {
-        const teams = getTeams(gr);
-        const rows = teams.map(t => `<tr><td>${t || ""}</td></tr>`).join('');
-        container.innerHTML += `
-            <div class="group">
-                <h3>GRUP ${gr}</h3>
-                <table>${rows}</table>
-            </div>`;
-    });
+// ==== DRAW WHEEL ====
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+const numSegments = teams.length;
+const anglePerSegment = (2 * Math.PI) / numSegments;
+
+function drawWheel(rotation = 0) {
+  const colors = ["#ff6666", "#66b3ff", "#99ff99", "#ffcc99"];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < numSegments; i++) {
+    const angle = i * anglePerSegment + rotation;
+    ctx.beginPath();
+    ctx.moveTo(250, 250);
+    ctx.arc(250, 250, 240, angle, angle + anglePerSegment);
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(250, 250);
+    ctx.rotate(angle + anglePerSegment / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#000";
+    ctx.font = "bold 16px Segoe UI";
+    ctx.fillText(teams[i], 230, 10);
+    ctx.restore();
+  }
 }
 
-// Event listener agar realtime tanpa refresh
-window.addEventListener("storage", (event) => {
-    if (event.key && event.key.startsWith("group")) {
-        renderGroups();
+// ==== SPIN FUNCTION ====
+let spinning = false;
+let rotation = 0;
+
+document.getElementById("spinBtn").addEventListener("click", () => {
+  if (spinning || teams.length === 0) return;
+  spinning = true;
+  let spinSpeed = Math.random() * 10 + 20;
+  const deceleration = 0.05;
+
+  const spinInterval = setInterval(() => {
+    rotation += spinSpeed * Math.PI / 180;
+    spinSpeed *= (1 - deceleration / 10);
+    drawWheel(rotation);
+
+    if (spinSpeed < 0.3) {
+      clearInterval(spinInterval);
+      spinning = false;
+      const winnerIndex = Math.floor(((2 * Math.PI - (rotation % (2 * Math.PI))) / anglePerSegment)) % numSegments;
+      const winner = teams.splice(winnerIndex, 1)[0];
+      alert(`🏆 ${winner} masuk ke Grup ${groups[groupIndex]}`);
+      saveTeamToGroup(winner);
+      drawWheel(rotation);
     }
+  }, 30);
 });
 
-// Inisialisasi awal
-renderGroups();
-</script>
+// ==== RENDER GRUP ====
+function renderGroups() {
+  const container = document.getElementById("overlayContainer");
+  container.innerHTML = '';
+  groups.forEach(gr => {
+    const list = getTeams(gr);
+    const rows = list.map(t => `<tr><td>${t || ""}</td></tr>`).join('');
+    container.innerHTML += `
+      <div class="group">
+        <h3>GRUP ${gr}</h3>
+        <table>${rows}</table>
+      </div>`;
+  });
+}
 
+// ==== INIT ====
+drawWheel();
+renderGroups();
+
+</script>
 </body>
 </html>
