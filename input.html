@@ -34,7 +34,7 @@ button {
 }
 #saveTeams { background: #ffdd00; color: #000; }
 #saveTeams:hover { transform: scale(1.05); }
-#resetAll { background: #ff4444; color: #fff; margin-left: 10px; }
+#resetAll { background: #ff4444; color: #fff; }
 #resetAll:hover { transform: scale(1.05); }
 .button-container { display: flex; gap: 10px; }
 </style>
@@ -62,21 +62,16 @@ document.getElementById("saveTeams").addEventListener("click", () => {
   alert("Tim berhasil disimpan! Sekarang buka index.html untuk memutar wheel.");
 });
 
-// Tombol Reset Semua Wheel + Grup
+// Tombol Reset Semua Wheel & Grup
 document.getElementById("resetAll").addEventListener("click", () => {
   if (!confirm("Yakin ingin mereset semua tim dan grup?")) return;
-
-  // Hapus semua tim wheel
+  // Hapus tim wheel
   localStorage.removeItem("wheelTeams");
-
-  // Hapus semua grup
+  // Hapus grup
   const groups = ["A","B","C","D"];
   groups.forEach(g => localStorage.removeItem(`group${g}`));
-
-  // Kosongkan textarea
   document.getElementById("teamList").value = "";
-
-  alert("Semua tim dan grup telah di-reset. Buka index.html untuk wheel kosong.");
+  alert("Semua tim dan grup telah di-reset! Buka index.html untuk wheel kosong.");
 });
 </script>
 </body>
