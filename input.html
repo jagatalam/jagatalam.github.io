@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Input Nama Tim</title>
+<style>
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #0b1a39;
+    color: white;
+    padding: 30px;
+}
+h2 { text-align: center; color: #FFD700; }
+.group-input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    margin: 20px 0;
+    padding: 15px;
+}
+label {
+    display: inline-block;
+    width: 70px;
+}
+input {
+    width: 150px;
+    margin-right: 10px;
+    padding: 5px;
+}
+button {
+    background: #FFD700;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background: #FFC300;
+}
+</style>
+</head>
+<body>
+
+<h2>Input Nama Tim per Grup</h2>
+
+<div id="formContainer"></div>
+
+<script>
+const groups = ['A','B','C','D'];
+
+// Buat form input per grup
+function createForm() {
+    const container = document.getElementById("formContainer");
+    groups.forEach(gr => {
+        let formHTML = `<div class="group-input"><h3>GRUP ${gr}</h3>`;
+        for (let i = 1; i <= 4; i++) {
+            formHTML += `
+                <div>
+                    <label>Tim ${i}</label>
+                    <input type="text" id="group${gr}_team${i}" placeholder="Nama Tim ${i}">
+                    <button onclick="saveTeam('${gr}', ${i})">Input</button>
+                </div>`;
+        }
+        formHTML += `</div>`;
+        container.innerHTML += formHTML;
+    });
+}
+
+function saveTeam(group, index) {
+    const inputId = `group${group}_team${index}`;
+    const newName = document.getElementById(inputId).value.trim();
+    if (newName === "") return alert("Nama tim tidak boleh kosong!");
+
+    let teams = JSON.parse(localStorage.getItem(`group${group}`)) || ["TIM 1","TIM 2","TIM 3","TIM 4"];
+    teams[index - 1] = newName;
+    localStorage.setItem(`group${group}`, JSON.stringify(teams));
+    alert(`Tim ${index} pada Grup ${group} telah diupdate!`);
+}
+
+createForm();
+</script>
+
+</body>
+</html>
