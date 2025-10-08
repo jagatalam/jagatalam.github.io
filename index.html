@@ -21,8 +21,9 @@ body {
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* posisi roda ke atas */
   position: relative;
+  padding-top: 60px; /* jarak dari atas */
 }
 
 /* Container roda */
@@ -42,12 +43,12 @@ body {
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-/* Pointer tetap di sisi kanan roda */
+/* Pointer diputar 180 derajat (menghadap ke kiri arah roda) */
 .pointer {
   position: absolute;
   top: 50%;
-  right: -25px;
-  transform: translateY(-50%);
+  left: -25px; /* pindah ke sisi kiri roda */
+  transform: translateY(-50%) rotate(180deg);
   width: 0;
   height: 0;
   border-top: 15px solid transparent;
@@ -234,14 +235,14 @@ document.getElementById("spinButton").addEventListener("click", () => {
 
   const randomIndex = Math.floor(Math.random() * teams.length);
   const segmentAngle = 360 / teams.length;
-  const stopAngle = 360 * 5 + (90 - randomIndex * segmentAngle); // pointer di kanan (90°)
+  const stopAngle = 360 * 5 + (270 - randomIndex * segmentAngle); // pointer kiri (270°)
 
   rotation += stopAngle;
   wheel.style.transform = `rotate(${rotation}deg)`;
 
   setTimeout(() => {
     const normalizedRotation = (rotation % 360 + 360) % 360;
-    const index = Math.floor(((90 - normalizedRotation + 360) % 360) / segmentAngle);
+    const index = Math.floor(((270 - normalizedRotation + 360) % 360) / segmentAngle);
     const selectedTeam = teams[index] || teams[0];
 
     showPopup(selectedTeam);
