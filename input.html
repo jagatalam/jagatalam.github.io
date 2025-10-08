@@ -13,76 +13,119 @@ body {
     display: flex;
     justify-content: space-between;
 }
-h2 {
-    text-align: center;
-    color: #FFD700;
-}
+
+/* Struktur dua kolom utama */
 .container {
     display: flex;
     width: 100%;
+    gap: 30px;
 }
+
+/* Kiri: input grup */
 .left {
     width: 65%;
 }
+
+/* Kanan: daftar tim */
 .right {
     width: 30%;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 10px;
-    padding: 15px;
+    padding: 20px;
     height: fit-content;
+    box-shadow: 0 0 10px rgba(255,255,255,0.1);
 }
+
+/* Judul */
+h2 {
+    text-align: center;
+    color: #FFD700;
+    margin-bottom: 25px;
+}
+
+/* Blok setiap grup */
 .group-input {
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 10px;
-    margin: 20px 0;
-    padding: 15px;
+    margin-bottom: 25px;
+    padding: 20px;
 }
+
+/* Judul grup */
+.group-input h3 {
+    margin-top: 0;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+/* Baris tiap tim */
+.group-input .team-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* Label "Tim 1" */
 label {
-    display: inline-block;
     width: 70px;
+    font-weight: 500;
 }
+
+/* Dropdown */
 select {
-    width: 160px;
-    margin-right: 10px;
-    padding: 5px;
-    border-radius: 5px;
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 6px;
     border: none;
+    margin-right: 10px;
+    font-size: 14px;
 }
+
+/* Tombol input */
 button {
     background: #FFD700;
     border: none;
-    padding: 6px 10px;
-    border-radius: 5px;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 13px;
+    transition: 0.2s;
 }
 button:hover {
     background: #FFC300;
 }
+
+/* Tombol reset */
 #resetAll {
     display: block;
-    margin: 25px auto;
-    padding: 10px 20px;
+    margin: 30px auto;
+    padding: 10px 25px;
     background: #d9534f;
     border: none;
     color: white;
     font-size: 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 }
 #resetAll:hover {
     background: #c9302c;
 }
+
+/* Textarea daftar tim */
 textarea {
     width: 100%;
-    height: 300px;
+    height: 320px;
     border-radius: 10px;
     border: none;
     padding: 10px;
     resize: none;
     font-size: 14px;
+    color: #111;
 }
 </style>
 </head>
@@ -113,12 +156,12 @@ const groups = ['A','B','C','D'];
 // Buat form input per grup
 function createForm() {
     const container = document.getElementById("formContainer");
-    container.innerHTML = ""; 
+    container.innerHTML = "";
     groups.forEach(gr => {
         let formHTML = `<div class="group-input"><h3>GRUP ${gr}</h3>`;
         for (let i = 1; i <= 4; i++) {
             formHTML += `
-                <div>
+                <div class="team-row">
                     <label>Tim ${i}</label>
                     <select id="group${gr}_team${i}">
                         <option value="">-- pilih tim --</option>
@@ -159,7 +202,7 @@ function saveTeam(group, index) {
     teams[index - 1] = newName;
     localStorage.setItem(`group${group}`, JSON.stringify(teams));
 
-    // Trigger manual agar halaman index.html update realtime
+    // Trigger event untuk update realtime di halaman overlay
     window.dispatchEvent(new StorageEvent('storage', { key: `group${group}`, newValue: JSON.stringify(teams) }));
 
     alert(`✅ Tim ${index} pada Grup ${group} telah diupdate!`);
@@ -174,7 +217,7 @@ function resetAll() {
     }
 }
 
-// Tambah event listener untuk update dropdown otomatis
+// Update dropdown otomatis saat textarea berubah
 document.getElementById("teamList").addEventListener("input", updateDropdowns);
 
 createForm();
