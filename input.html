@@ -3,76 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Input Tim</title>
+<title>Input Tim Turnamen</title>
 <style>
 body {
   font-family: "Segoe UI", sans-serif;
   background: #0b1a39;
-  color: #fff;
+  color: white;
+  margin: 0;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px;
 }
+h1 { color: #ffd700; margin-bottom: 20px; }
 textarea {
-  width: 400px;
-  height: 300px;
-  font-size: 16px;
-  padding: 10px;
+  width: 90%;
+  height: 250px;
   border-radius: 10px;
+  padding: 15px;
+  font-size: 16px;
   border: none;
   resize: none;
+  outline: none;
+}
+.button-container {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
 }
 button {
-  margin-top: 20px;
-  padding: 15px 30px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 10px;
+  padding: 12px 25px;
   border: none;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
 }
-#saveTeams { background: #ffdd00; color: #000; }
-#saveTeams:hover { transform: scale(1.05); }
-#resetAll { background: #ff4444; color: #fff; }
-#resetAll:hover { transform: scale(1.05); }
-.button-container { display: flex; gap: 10px; }
+#saveTeams { background: #28a745; color: #fff; }
+#resetGroupsBtn { background: #dc3545; color: #fff; }
+#resetWheelBtn { background: #ffc107; color: #000; }
+button:hover { transform: scale(1.05); }
+.notice {
+  margin-top: 25px;
+  color: #ccc;
+  font-size: 14px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
-<h2>Masukkan Nama Tim (Satu Per Baris)</h2>
-<textarea id="teamList" placeholder="Team A&#10;Team B&#10;Team C"></textarea>
+
+<h1>🎯 Input Nama Tim</h1>
+
+<textarea id="teamInput" placeholder="Masukkan nama tim, satu tim per baris..."></textarea>
+
 <div class="button-container">
-  <button id="saveTeams">Simpan Tim</button>
-  <button id="resetAll">Reset Semua Wheel & Grup</button>
+  <button id="saveTeams">💾 Simpan Tim</button>
+  <button id="resetGroupsBtn">🔁 Reset Grup</button>
+  <button id="resetWheelBtn">🌀 Reset Wheel & Grup</button>
 </div>
 
+<p class="notice">Buka file <b>index.html</b> untuk melihat roda undian dan hasil grup.</p>
+
 <script>
+// ================== SIMPAN TIM ==================
 document.getElementById("saveTeams").addEventListener("click", () => {
-  const textarea = document.getElementById("teamList");
-  const teams = textarea.value
-    .split("\n")
-    .map(t => t.trim())
-    .filter(t => t !== "");
-  if (teams.length === 0) {
-    alert("Isi minimal satu tim!");
-    return;
-  }
+  const text = document.getElementById("teamInput").value.trim();
+  if (!text) return alert("Masukkan dulu nama tim!");
+  const teams = text.split("\n").map(t => t.trim()).filter(t => t !== "");
+  if (teams.length < 2) return alert("Minimal harus ada 2 tim!");
   localStorage.setItem("wheelTeams", JSON.stringify(teams));
-  alert("Tim berhasil disimpan! Sekarang buka index.html untuk memutar wheel.");
+  alert(`✅ ${teams.length} tim berhasil disimpan! Buka index.html untuk mulai undian.`);
 });
 
-// Tombol Reset Semua Wheel & Grup
-document.getElementById("resetAll").addEventListener("click", () => {
-  if (!confirm("Yakin ingin mereset semua tim dan grup?")) return;
-  // Hapus tim wheel
-  localStorage.removeItem("wheelTeams");
-  // Hapus grup
+// ================== RESET SEMUA GRUP ==================
+document.getElementById("resetGroupsBtn").addEventListener("click", () => {
+  if (!confirm("Yakin ingin mereset semua grup?")) return;
   const groups = ["A","B","C","D"];
   groups.forEach(g => localStorage.removeItem(`group${g}`));
-  document.getElementById("teamList").value = "";
-  alert("Semua tim dan grup telah di-reset! Buka index.html untuk wheel kosong.");
+  alert("🗑 Semua grup telah dihapus!");
+});
+
+// ================== RESET WHEEL & GRUP ==================
+document.getElementById("resetWheelBtn").addEventListener("click", () => {
+  if (!confirm("Yakin ingin mereset semua tim dan grup?")) return;
+  localStorage.removeItem("wheelTeams");
+  const groups = ["A","B","C","D"];
+  groups.forEach(g => localStorage.removeItem(`group${g}`));
+  alert("🔄 Semua tim & grup telah di-reset!");
 });
 </script>
+
 </body>
 </html>
