@@ -18,17 +18,15 @@ body {
   left: 0;
   width: 100%;
   height: 35vh;
-  background: rgba(0, 51, 153, 0.85);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-blend-mode: multiply;
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 .group {
-  background: rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.5);
   padding: 10px;
   border-radius: 10px;
   width: 180px;
@@ -49,16 +47,19 @@ body {
 
 <script>
 const groups = ["A","B","C","D"];
-let teams = JSON.parse(localStorage.getItem("wheelTeams")) || [];
+let teams = JSON.parse(localStorage.getItem("wheelTeams")) || [
+  "Team A","Team B","Team C","Team D","Team E","Team F","Team G","Team H"
+];
 let bg = localStorage.getItem("groupBackground");
 
-// 🔹 Terapkan background dari localStorage
+// 🔹 Terapkan background dari localStorage (tanpa biru transparan)
 const overlay = document.getElementById("overlayContainer");
 if (bg) {
   overlay.style.backgroundImage = `url('${bg}')`;
+  overlay.style.backgroundColor = "transparent";
 } else {
   overlay.style.backgroundImage = "none";
-  overlay.style.background = "rgba(0, 51, 153, 0.85)";
+  overlay.style.backgroundColor = "#003399"; // fallback biru solid
 }
 
 // 🔹 Render grup dari localStorage
@@ -68,16 +69,29 @@ groups.forEach(g => {
   list.innerHTML = data.map(t => `<li>${t}</li>`).join("");
 });
 
-// 🔹 (Dummy contoh wheel)
+// 🔹 Gambar wheel sederhana berdasarkan tim
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
-ctx.beginPath();
-ctx.arc(200,200,150,0,Math.PI*2);
-ctx.fillStyle="#1abc9c";
-ctx.fill();
-ctx.font="20px Arial";
-ctx.fillStyle="#fff";
-ctx.fillText("Wheel",160,210);
+const total = teams.length;
+const angle = (2 * Math.PI) / total;
+
+teams.forEach((team, i) => {
+  const start = i * angle;
+  const end = start + angle;
+  ctx.beginPath();
+  ctx.moveTo(200,200);
+  ctx.arc(200,200,150,start,end);
+  ctx.fillStyle = `hsl(${i * (360 / total)}, 70%, 50%)`;
+  ctx.fill();
+  ctx.save();
+  ctx.translate(200,200);
+  ctx.rotate(start + angle / 2);
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px Arial";
+  ctx.fillText(team, 140, 5);
+  ctx.restore();
+});
 </script>
 </body>
 </html>
