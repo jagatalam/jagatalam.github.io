@@ -11,21 +11,14 @@ body {
   background: #021027;
   color: #fff;
   overflow: hidden;
-  display: flex;
-  height: 100vh;
 }
 
 /* Bagian kiri: wheel */
-.left {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
 #wheel-container {
-  position: relative;
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
   width: 400px;
   height: 400px;
 }
@@ -53,7 +46,7 @@ canvas#wheel {
   z-index: 5;
 }
 
-/* Panah kuning */
+/* Panah kuning di kanan roda */
 .pointer {
   position: absolute;
   top: 50%;
@@ -67,10 +60,13 @@ canvas#wheel {
   z-index: 10;
 }
 
-/* Bagian bawah (grup) */
+/* Bagian bawah (overlay grup) */
 .overlay-container {
-  width: 50%;
-  height: 100vh;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 25vh; /* seperempat layar */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -96,14 +92,14 @@ canvas#wheel {
 </head>
 <body>
 
-<div class="left">
-  <div id="wheel-container">
-    <canvas id="wheel" width="400" height="400"></canvas>
-    <button id="spinButton">SPIN</button>
-    <div class="pointer"></div>
-  </div>
+<!-- Wheel di kiri -->
+<div id="wheel-container">
+  <canvas id="wheel" width="400" height="400"></canvas>
+  <button id="spinButton">SPIN</button>
+  <div class="pointer"></div>
 </div>
 
+<!-- Grup di bawah -->
 <div class="overlay-container" id="overlayContainer">
   <div id="groupA" class="group"><h3>Grup A</h3><table><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></div>
   <div id="groupB" class="group"><h3>Grup B</h3><table><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></div>
@@ -122,15 +118,15 @@ let teams = JSON.parse(localStorage.getItem("wheelTeams")) || [
 let bg = localStorage.getItem("groupBackground");
 let rotation = 0;
 let spinning = false;
-let currentGroupIndex = 0; // A -> B -> C -> D
-let currentPos = 3; // mulai dari posisi 4 (index 3)
+let currentGroupIndex = 0;
+let currentPos = 3;
 
 // Terapkan background dari localStorage
 const overlay = document.getElementById("overlayContainer");
 if (bg) overlay.style.backgroundImage = `url('${bg}')`;
 else overlay.style.backgroundColor = "#003399";
 
-// ================= DRAW WHEEL =================
+// ============ Gambar Wheel ============
 function drawWheel() {
   ctx.clearRect(0, 0, 400, 400);
   const total = teams.length;
@@ -162,7 +158,7 @@ function drawWheel() {
 }
 drawWheel();
 
-// ================= SPIN ACTION =================
+// ============ Spin Action ============
 document.getElementById("spinButton").addEventListener("click", () => {
   if (spinning || teams.length === 0) return;
   spinning = true;
@@ -185,22 +181,22 @@ document.getElementById("spinButton").addEventListener("click", () => {
   }, 6200);
 });
 
-// ================= ADD TEAM TO GROUP =================
+// ============ Tambahkan Tim ke Grup ============
 function addTeamToGroup(team) {
   const group = groups[currentGroupIndex];
   const groupTable = document.querySelector(`#group${group} table`);
   const rows = groupTable.querySelectorAll("tr");
   rows[currentPos].children[0].textContent = team;
 
-  // Update localStorage
+  // Simpan ke localStorage
   let saved = JSON.parse(localStorage.getItem(`group${group}`)) || ["", "", "", ""];
   saved[currentPos] = team;
   localStorage.setItem(`group${group}`, JSON.stringify(saved));
 
-  // Geser ke grup selanjutnya
+  // Ganti grup & posisi
   currentGroupIndex = (currentGroupIndex + 1) % groups.length;
-  if (currentGroupIndex === 0) currentPos--; // setelah D kembali ke A, isi posisi lebih atas
-  if (currentPos < 0) currentPos = 0; // berhenti di atas
+  if (currentGroupIndex === 0) currentPos--;
+  if (currentPos < 0) currentPos = 0;
 }
 </script>
 </body>
