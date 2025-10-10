@@ -29,7 +29,7 @@ button {
 }
 #saveTeams { background: #1abc9c; color: #fff; }
 #resetAll { background: #e74c3c; color: #fff; }
-#uploadBg { background: #3498db; color: #fff; }
+#uploadBgBtn { background: #3498db; color: #fff; }
 </style>
 </head>
 <body>
@@ -41,7 +41,8 @@ button {
 <button id="resetAll">♻️ Reset Grup & Wheel</button><br><br>
 
 <h3>🖼️ Ganti Background Grup</h3>
-<input type="file" id="uploadBg" accept="image/*"><br>
+<input type="file" id="fileBg" accept="image/*"><br>
+<button id="uploadBgBtn">📤 Upload Background</button><br>
 <small>Unggah gambar untuk background grup di index.html</small>
 
 <script>
@@ -54,9 +55,9 @@ document.getElementById("saveTeams").addEventListener("click", () => {
 });
 
 // Upload Background
-document.getElementById("uploadBg").addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (!file) return;
+document.getElementById("uploadBgBtn").addEventListener("click", () => {
+  const file = document.getElementById("fileBg").files[0];
+  if (!file) return alert("Pilih gambar terlebih dahulu!");
   const reader = new FileReader();
   reader.onload = function (event) {
     localStorage.setItem("groupBackground", event.target.result);
