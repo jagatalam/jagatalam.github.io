@@ -13,7 +13,7 @@ body {
   overflow: hidden;
 }
 
-/* Bagian kiri: wheel */
+/* Wheel kiri */
 #wheel-container {
   position: absolute;
   left: 5%;
@@ -46,7 +46,7 @@ canvas#wheel {
   z-index: 5;
 }
 
-/* Panah kuning di kanan roda */
+/* Panah kuning di kanan */
 .pointer {
   position: absolute;
   top: 50%;
@@ -60,13 +60,13 @@ canvas#wheel {
   z-index: 10;
 }
 
-/* Bagian bawah (overlay grup) */
+/* Grup di bawah */
 .overlay-container {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 25vh; /* seperempat layar */
+  height: 25vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -92,14 +92,12 @@ canvas#wheel {
 </head>
 <body>
 
-<!-- Wheel di kiri -->
 <div id="wheel-container">
   <canvas id="wheel" width="400" height="400"></canvas>
   <button id="spinButton">SPIN</button>
   <div class="pointer"></div>
 </div>
 
-<!-- Grup di bawah -->
 <div class="overlay-container" id="overlayContainer">
   <div id="groupA" class="group"><h3>Grup A</h3><table><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></div>
   <div id="groupB" class="group"><h3>Grup B</h3><table><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></div>
@@ -112,8 +110,8 @@ const wheel = document.getElementById("wheel");
 const ctx = wheel.getContext("2d");
 const groups = ["A", "B", "C", "D"];
 let teams = JSON.parse(localStorage.getItem("wheelTeams")) || [
-  "Team A", "Team B", "Team C", "Team D",
-  "Team E", "Team F", "Team G", "Team H"
+  "Team A","Team B","Team C","Team D",
+  "Team E","Team F","Team G","Team H"
 ];
 let bg = localStorage.getItem("groupBackground");
 let rotation = 0;
@@ -126,7 +124,7 @@ const overlay = document.getElementById("overlayContainer");
 if (bg) overlay.style.backgroundImage = `url('${bg}')`;
 else overlay.style.backgroundColor = "#003399";
 
-// ============ Gambar Wheel ============
+// ================= DRAW WHEEL =================
 function drawWheel() {
   ctx.clearRect(0, 0, 400, 400);
   const total = teams.length;
@@ -158,30 +156,35 @@ function drawWheel() {
 }
 drawWheel();
 
-// ============ Spin Action ============
+// ================= SPIN =================
 document.getElementById("spinButton").addEventListener("click", () => {
   if (spinning || teams.length === 0) return;
   spinning = true;
+
   const segmentAngle = 360 / teams.length;
   const randomIndex = Math.floor(Math.random() * teams.length);
   const stopAngle = 360 * 5 + randomIndex * segmentAngle + (Math.random() * 10 - 5);
   rotation += stopAngle;
   wheel.style.transform = `rotate(${rotation}deg)`;
-  wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)";
+  wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)`;
 
   setTimeout(() => {
     const normalized = (rotation % 360 + 360) % 360;
-    const index = Math.floor(((360 - normalized + 90) % 360) / segmentAngle);
-    const selectedTeam = teams[index % teams.length];
+
+    // ✅ Hitung arah berdasarkan panah kanan (0 derajat)
+    const index = Math.floor(((normalized) % 360) / segmentAngle);
+    const selectedTeam = teams[(teams.length - index - 1 + teams.length) % teams.length];
+
     alert("🎯 Tim Terpilih: " + selectedTeam);
     addTeamToGroup(selectedTeam);
-    teams.splice(index, 1);
+
+    teams.splice(teams.indexOf(selectedTeam), 1);
     drawWheel();
     spinning = false;
   }, 6200);
 });
 
-// ============ Tambahkan Tim ke Grup ============
+// ================= ADD TEAM TO GROUP =================
 function addTeamToGroup(team) {
   const group = groups[currentGroupIndex];
   const groupTable = document.querySelector(`#group${group} table`);
